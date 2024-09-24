@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .slider-vertical {
+    writing-mode: vertical-lr;
+    direction: rtl;
+    vertical-align: middle;
+  }
+}
