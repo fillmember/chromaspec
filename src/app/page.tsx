@@ -51,9 +51,11 @@ const allColors = atom<ScaleDataWithComputedData[]>((get) =>
       chromaMaxPerLevel,
       colors: get(atomLevels).map((level, i) => {
         const lightness = 100 - level;
-        const chromaValue =
+        const chromaValue = Math.max(
+          0.5,
           Math.min((chromaMaxPerLevel ?? defaultChromasMaxPerLevel)[i], 100) *
-          chromaMultiplier;
+            chromaMultiplier
+        );
         return chroma.lch(lightness, chromaValue, hue);
       }),
     };
