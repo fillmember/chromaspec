@@ -288,7 +288,7 @@ function UIScale({
             const copyStringLCH = color.css("lch");
             const relativeLuminance = round(color.luminance(), 2);
             return (
-              <li className="text-sm space-y-1 flex flex-col">
+              <li className="text-sm space-y-1 flex flex-col" key={level}>
                 <div
                   className="w-full min-h-9 flex-grow rounded border touch-none"
                   style={{ background: `lch(${strLCH.join(" ")})` }}
@@ -422,7 +422,7 @@ export default function Page() {
           {uiDataEnumViewDataPoint.map(({ type, label }) => {
             const checked = dataPointVisibility.includes(type);
             return (
-              <Field className="flex gap-1 items-center">
+              <Field className="flex gap-1 items-center" key={type}>
                 <Input
                   type="checkbox"
                   checked={checked}
