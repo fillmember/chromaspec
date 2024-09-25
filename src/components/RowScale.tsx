@@ -197,12 +197,12 @@ export function RowScale({
               Confirm Delete Scale?
               <PopoverButton className="hover:text-green-500">No</PopoverButton>
               /
-              <button
+              <PopoverButton
                 className="hover:text-red-500"
                 onClick={methodDeleteScale}
               >
                 Yes
-              </button>
+              </PopoverButton>
             </PopoverPanel>
           </Popover>
         </div>

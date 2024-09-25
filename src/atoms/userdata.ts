@@ -28,26 +28,25 @@ export interface ScaleDataWithComputedData extends ScaleData {
 
 export const allColors = atom<ScaleDataWithComputedData[]>((get) => {
   const levels = get(atomLevels);
-  return get(atomUserData).map(
-    ({ name, hue, chromaMultiplier, chromaMaxPerLevel }) => {
-      return {
-        name,
-        hue,
-        chromaMultiplier,
-        chromaMaxPerLevel,
-        levels,
-        colors: levels.map((level, i) => {
-          const lightness = 100 - level;
-          const chromaValue = Math.max(
-            0.5,
-            Math.min((chromaMaxPerLevel ?? defaultChromasMaxPerLevel)[i], 100) *
-              chromaMultiplier
-          );
-          return chroma.lch(lightness, chromaValue, hue);
-        }),
-      };
-    }
-  );
+  const userData = get(atomUserData);
+  return userData.map(({ name, hue, chromaMultiplier, chromaMaxPerLevel }) => {
+    return {
+      name,
+      hue,
+      chromaMultiplier,
+      chromaMaxPerLevel,
+      levels,
+      colors: levels.map((level, i) => {
+        const lightness = 100 - level;
+        const chromaValue = Math.max(
+          0.5,
+          Math.min((chromaMaxPerLevel ?? defaultChromasMaxPerLevel)[i], 100) *
+            chromaMultiplier
+        );
+        return chroma.lch(lightness, chromaValue, hue);
+      }),
+    };
+  });
 });
 
 /* - - - - */
