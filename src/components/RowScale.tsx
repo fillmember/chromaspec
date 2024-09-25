@@ -126,8 +126,8 @@ export function RowScale({
           </Listbox>
         </Field>
         <Popover>
-          <PopoverButton className={clsHeaderField}>
-            Saturation Curve
+          <PopoverButton className={clsx(clsHeaderField, "w-full")}>
+            Max Saturation Per Step...
           </PopoverButton>
           <PopoverPanel
             anchor="bottom start"

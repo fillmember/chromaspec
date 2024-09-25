@@ -13,7 +13,6 @@ import {
 } from "@/atoms/userdata";
 import { RowScale } from "@/components/RowScale";
 import { RowWithLevelGrid } from "@/components/RowWithLevelGrid";
-import { SiteHeader } from "@/components/SiteHeader";
 import { Field, Fieldset, Input, Label, Legend } from "@headlessui/react";
 import { produce } from "immer";
 import { useAtom } from "jotai/react";
