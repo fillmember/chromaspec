@@ -9,11 +9,11 @@ import {
 } from "@headlessui/react";
 import chroma from "chroma-js";
 import clsx from "clsx";
-import { atom, useAtom } from "jotai";
+import { useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import { round } from "lodash";
 import Link from "next/link";
-import { ReactNode, useEffect, useMemo, useState } from "react";
+import { ReactNode, useMemo } from "react";
 import { LuChevronDown } from "react-icons/lu";
 
 interface Combination {
@@ -171,7 +171,7 @@ export default function PageCombinations() {
       "4.5": getCombosWithContrastRatioOrMore(bgScale, fgScale, 4.5, 7),
       "3": getCombosWithContrastRatioOrMore(bgScale, fgScale, 3, 4.5),
     };
-  }, [bgScaleName, fgScaleName]);
+  }, [scales, bgScaleName, fgScaleName]);
   return (
     <section className="space-y-8 my-8">
       <h2 className="text-2xl font-medium flex items-center gap-1">
