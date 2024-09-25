@@ -9,7 +9,7 @@ import {
   defaultChromasMaxPerLevel,
   exportScalesAsSVG,
 } from "@/atoms/userdata";
-import { useGridSettings } from "@/hooks/useGridSettings";
+import { useGridSettings } from "@/utils/useGridSettings";
 import {
   Field,
   Label,
@@ -25,9 +25,10 @@ import {
 import clsx from "clsx";
 import { useAtom } from "jotai";
 import { padStart, round } from "lodash";
-import { LuCheck, LuShare } from "react-icons/lu";
+import { LuCheck, LuShare, LuSparkles } from "react-icons/lu";
 import { DtDd } from "./DtDd";
 import { RowWithLevelGrid } from "./RowWithLevelGrid";
+import { autoName } from "@/utils/autoName";
 
 const clsHeaderField =
   "flex items-center gap-2 rounded-lg bg-black/5 px-2 py-1.5 text-sm";
@@ -55,6 +56,14 @@ export function RowScale({
             value={name}
             onChange={(evt) => updateScale({ name: evt.target.value })}
           />
+          <button
+            className="size-6 hover:text-purple-600"
+            onClick={() =>
+              updateScale({ name: autoName(hue, chromaMultiplier) })
+            }
+          >
+            <LuSparkles />
+          </button>
         </Field>
         <Field className={clsHeaderField}>
           <Label>Hue</Label>

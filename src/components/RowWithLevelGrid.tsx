@@ -1,4 +1,4 @@
-import { useGridSettings } from "@/hooks/useGridSettings";
+import { useGridSettings } from "@/utils/useGridSettings";
 import clsx from "clsx";
 import type { FC, ReactNode } from "react";
 
