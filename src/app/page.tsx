@@ -75,16 +75,6 @@ export default function Page() {
         </Fieldset>
       </section>
       <section className="space-y-4">
-        <RowWithLevelGrid className="text-xs mb-1">
-          <header className="pl-2">levels</header>
-          <ol className="contents text-zinc-700">
-            {levels.map((l) => (
-              <li key={l} className="pl-1">
-                {l}
-              </li>
-            ))}
-          </ol>
-        </RowWithLevelGrid>
         {data.map((scale, index) => {
           return (
             <RowScale

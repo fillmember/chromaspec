@@ -1,7 +1,7 @@
 import { atomWithStorage } from "jotai/utils";
 
 export enum EnumViewDataPoint {
-  //   ScaleLevel,
+  ScaleLevel,
   LCH_L,
   LCH_C,
   LCH_H,
@@ -10,7 +10,7 @@ export enum EnumViewDataPoint {
 }
 
 export const uiDataEnumViewDataPoint = [
-  //   { type: EnumViewDataPoint.ScaleLevel, label: "Scale Level" },
+  { type: EnumViewDataPoint.ScaleLevel, label: "Scale Level" },
   { type: EnumViewDataPoint.LCH_L, label: "LCH Luminance" },
   { type: EnumViewDataPoint.LCH_C, label: "LCH Chroma" },
   { type: EnumViewDataPoint.LCH_H, label: "LCH Hue" },

@@ -231,6 +231,9 @@ export function RowScale({
                     "select-none"
                   )}
                 >
+                  {dataPointVisibility.includes(
+                    EnumViewDataPoint.ScaleLevel
+                  ) && <DtDd term="lv." desc={level} />}
                   {dataPointVisibility.includes(EnumViewDataPoint.LCH_L) && (
                     <DtDd
                       term="L"
