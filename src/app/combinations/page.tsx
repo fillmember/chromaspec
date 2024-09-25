@@ -1,7 +1,6 @@
 "use client";
 
 import { allColors, ScaleDataWithComputedData } from "@/atoms/userdata";
-import { DtDd } from "@/components/DtDd";
 import chroma from "chroma-js";
 import { useAtom } from "jotai";
 import { round } from "lodash";
@@ -89,9 +88,9 @@ export default function PageCombinations() {
   );
   return (
     <section className="space-y-8 my-8">
-      {combos.map(({ scale, ...combo }) => {
+      {combos.map(({ scale, ...combo }, index) => {
         return (
-          <section>
+          <section key={index}>
             <h2 className="text-2xl font-medium">combos within {scale.name}</h2>
             <Combinations
               title="7:1"
