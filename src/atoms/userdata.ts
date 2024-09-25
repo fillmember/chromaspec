@@ -1,6 +1,7 @@
 import chroma from "chroma-js";
 import { atom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
+import { defaultScales } from "./defaultScales";
 
 export interface ScaleData {
   name: string;
@@ -18,7 +19,7 @@ export const atomLevels = atomWithStorage("chromaspec-levels", defaultLevels);
 
 export const atomUserData = atomWithStorage<ScaleData[]>(
   "chromaspec-scales-2",
-  []
+  defaultScales
 );
 
 export interface ScaleDataWithComputedData extends ScaleData {
