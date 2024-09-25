@@ -29,6 +29,9 @@ import { LuCheck, LuShare } from "react-icons/lu";
 import { DtDd } from "./DtDd";
 import { RowWithLevelGrid } from "./RowWithLevelGrid";
 
+const clsHeaderField =
+  "flex items-center gap-2 rounded-lg bg-black/5 px-2 py-1.5 text-sm";
+
 export function RowScale({
   scale,
   updateScale,
@@ -38,14 +41,22 @@ export function RowScale({
   updateScale: (s: Partial<ScaleData>) => void;
   methodDeleteScale: () => void;
 }) {
-  const { hue, chromaMultiplier, colors, chromaMaxPerLevel } = scale;
+  const { name, hue, chromaMultiplier, colors, chromaMaxPerLevel } = scale;
   const [levels] = useAtom(atomLevels);
   const [dataPointVisibility] = useAtom(atomDataPointVisibility);
   const { containerStyle } = useGridSettings();
   return (
     <RowWithLevelGrid>
       <header className="space-y-1">
-        <Field className="flex items-center gap-2 rounded-lg bg-black/5 px-2 py-1.5 text-sm">
+        <Field className={clsHeaderField}>
+          <Label>Name</Label>
+          <Input
+            className="bg-transparent border-b border-zinc-300 w-full px-1 py-.5"
+            value={name}
+            onChange={(evt) => updateScale({ name: evt.target.value })}
+          />
+        </Field>
+        <Field className={clsHeaderField}>
           <Label>Hue</Label>
           <Input
             type="range"
@@ -61,7 +72,7 @@ export function RowScale({
           />
           <span className="font-mono">{padStart(hue.toFixed(0), 3, "0")}</span>
         </Field>
-        <Field className="flex items-center gap-2 rounded-lg bg-black/5 px-2 py-1.5 text-sm">
+        <Field className={clsHeaderField}>
           <Label>
             Sat<sup>x</sup>
           </Label>
@@ -115,7 +126,7 @@ export function RowScale({
           </Listbox>
         </Field>
         <Popover>
-          <PopoverButton className="flex items-center gap-2 rounded-lg bg-black/5 px-2 py-1.5 text-sm w-full">
+          <PopoverButton className={clsHeaderField}>
             Saturation Curve
           </PopoverButton>
           <PopoverPanel

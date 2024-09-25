@@ -13,6 +13,7 @@ import {
 } from "@/atoms/userdata";
 import { RowScale } from "@/components/RowScale";
 import { RowWithLevelGrid } from "@/components/RowWithLevelGrid";
+import { SiteHeader } from "@/components/SiteHeader";
 import { Field, Fieldset, Input, Label, Legend } from "@headlessui/react";
 import { produce } from "immer";
 import { useAtom } from "jotai/react";
@@ -26,12 +27,7 @@ export default function Page() {
   const [scales, setScales] = useAtom(atomUserData);
   const [data] = useAtom(allColors);
   return (
-    <main className="p-8 pt-4">
-      <header className="pb-1 mb-2 border-b border-zinc-700 flex justify-between items-center">
-        <h1 className="font-mono text-sm font-bold text-zinc-700 uppercase">
-          Chromaspec
-        </h1>
-      </header>
+    <>
       <section className="mb-2 flex gap-4 justify-between items-center">
         <div className="flex gap-2 items-center">
           <button
@@ -40,6 +36,7 @@ export default function Page() {
               setScales([
                 ...scales,
                 {
+                  name: "new scale",
                   hue: 0,
                   chromaMultiplier: 1,
                   chromaMaxPerLevel: defaultChromasMaxPerLevel,
@@ -115,9 +112,6 @@ export default function Page() {
           );
         })}
       </section>
-      <section>
-        <h2>Combinations</h2>
-      </section>
-    </main>
+    </>
   );
 }

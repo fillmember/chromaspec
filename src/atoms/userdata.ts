@@ -3,6 +3,7 @@ import { atom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 
 export interface ScaleData {
+  name: string;
   hue: number;
   chromaMultiplier: number;
   chromaMaxPerLevel: number[];
@@ -28,8 +29,9 @@ export interface ScaleDataWithComputedData extends ScaleData {
 export const allColors = atom<ScaleDataWithComputedData[]>((get) => {
   const levels = get(atomLevels);
   return get(atomUserData).map(
-    ({ hue, chromaMultiplier, chromaMaxPerLevel }) => {
+    ({ name, hue, chromaMultiplier, chromaMaxPerLevel }) => {
       return {
+        name,
         hue,
         chromaMultiplier,
         chromaMaxPerLevel,
