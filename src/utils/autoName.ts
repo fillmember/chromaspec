@@ -1,5 +1,3 @@
-import { identity } from "lodash";
-
 export const listAscending = [
   { name: "red", rangeMax: 15 },
   { name: "scarlet", rangeMax: 30 },
@@ -27,7 +25,7 @@ export const listAscending = [
   { name: "crimson", rangeMax: 360 },
 ];
 
-const listDescending = listAscending.map(identity).reverse();
+const listDescending = listAscending.map((x) => x).reverse();
 
 export const autoName = (hue: number, chromaMultiplier: number): string => {
   let prefix = "";
