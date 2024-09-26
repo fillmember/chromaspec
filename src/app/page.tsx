@@ -6,13 +6,11 @@ import {
 } from "@/atoms/applicationState";
 import {
   allColors,
-  atomLevels,
   atomUserData,
   defaultChromasMaxPerLevel,
   ScaleData,
 } from "@/atoms/userdata";
 import { RowScale } from "@/components/RowScale";
-import { RowWithLevelGrid } from "@/components/RowWithLevelGrid";
 import { Field, Fieldset, Input, Label, Legend } from "@headlessui/react";
 import { produce } from "immer";
 import { useAtom } from "jotai/react";
@@ -22,7 +20,6 @@ export default function Page() {
   const [dataPointVisibility, setDataPointVisibility] = useAtom(
     atomDataPointVisibility
   );
-  const [levels] = useAtom(atomLevels);
   const [scales, setScales] = useAtom(atomUserData);
   const [data] = useAtom(allColors);
   return (
