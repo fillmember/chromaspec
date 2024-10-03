@@ -18,7 +18,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <main className="p-8 pt-4">
+        <main className="p-8 pt-4 mx-auto max-w-[2048px]">
           <SiteHeader />
           {children}
         </main>

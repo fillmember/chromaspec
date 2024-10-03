@@ -4,15 +4,10 @@ import {
   atomDataPointVisibility,
   uiDataEnumViewDataPoint,
 } from "@/atoms/applicationState";
-import {
-  allColors,
-  atomUserData,
-  defaultChromasMaxPerLevel,
-  ScaleData,
-} from "@/atoms/userdata";
+import { allColors } from "@/atoms/userdata";
 import { RowScale } from "@/components/RowScale";
+import { useUserData } from "@/utils/useUserData";
 import { Field, Fieldset, Input, Label, Legend } from "@headlessui/react";
-import { produce } from "immer";
 import { useAtom } from "jotai/react";
 import { LuEye, LuPlusCircle } from "react-icons/lu";
 
@@ -20,7 +15,7 @@ export default function Page() {
   const [dataPointVisibility, setDataPointVisibility] = useAtom(
     atomDataPointVisibility
   );
-  const [scales, setScales] = useAtom(atomUserData);
+  const { addNewScale, updateScale, deleteScale } = useUserData();
   const [data] = useAtom(allColors);
   return (
     <>
@@ -28,17 +23,7 @@ export default function Page() {
         <div className="flex gap-2 items-center">
           <button
             className="border p-2 border-zinc-200 bg-zinc-100 text-zinc-800 text-sm flex gap-1 items-center rounded-lg hover:bg-zinc-200 active:bg-zinc-100"
-            onClick={() =>
-              setScales([
-                ...scales,
-                {
-                  name: "new scale",
-                  hue: 0,
-                  chromaMultiplier: 1,
-                  chromaMaxPerLevel: defaultChromasMaxPerLevel,
-                },
-              ])
-            }
+            onClick={addNewScale}
           >
             <LuPlusCircle />
             add scale
@@ -77,23 +62,8 @@ export default function Page() {
             <RowScale
               key={index}
               scale={scale}
-              updateScale={(partialData) =>
-                setScales(
-                  produce<ScaleData[]>(scales, (draftState) => {
-                    draftState[index] = {
-                      ...draftState[index],
-                      ...partialData,
-                    };
-                  })
-                )
-              }
-              methodDeleteScale={() => {
-                setScales(
-                  produce<ScaleData[]>(scales, (draftState) => {
-                    draftState.splice(index, 1);
-                  })
-                );
-              }}
+              updateScale={(partialData) => updateScale(index, partialData)}
+              deleteScale={() => deleteScale(index)}
             />
           );
         })}
