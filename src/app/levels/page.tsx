@@ -7,7 +7,7 @@ import { produce } from "immer";
 import { useAtom } from "jotai/react";
 
 export default function PageLevels() {
-  const [levels, setLevels] = useAtom(atomLevels);
+  const [levels] = useAtom(atomLevels);
   return (
     <section>
       <ol className="grid grid-cols-2 gap-2">
