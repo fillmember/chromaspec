@@ -97,7 +97,7 @@ const ScaleDisplay = ({
   className?: string;
 }) => {
   const { colors } = scale;
-  const index = Math.floor(colors.length / 2);
+  const index = Math.floor((colors.length - 1) / 2);
   const color = colors[index];
   return (
     <div
