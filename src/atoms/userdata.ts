@@ -2,7 +2,6 @@ import { atom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import { defaultScales } from "./defaultScales";
 import { formatHex, type Oklch } from "culori";
-import { clamp } from "lodash";
 
 export interface ScaleData {
   name: string;

@@ -14,7 +14,7 @@ type DragMeasurementData = {
   end: DragMeasurementDataPoint | null;
 };
 
-const useDragMeasurement = (
+export const useDragMeasurement = (
   parentRef?: MutableRefObject<HTMLDivElement | null>
 ): {
   bind: ReturnType<typeof useGesture>;
@@ -49,7 +49,7 @@ const useDragMeasurement = (
           });
         }
       },
-      onPointerUp: ({}) => {
+      onPointerUp: () => {
         setDragging(false);
         setStart(null);
         setEnd(null);
@@ -71,8 +71,7 @@ const useDragMeasurement = (
   return { bind, dragging, contrastRatio, start, end };
 };
 
-const DragMeasurementDisplay = ({
-  dragging,
+export const DragMeasurementDisplay = ({
   contrastRatio,
   start,
   end,

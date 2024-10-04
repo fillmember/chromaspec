@@ -1,6 +1,6 @@
 "use client";
 
-import { atomUserData, ScaleData } from "@/atoms/userdata";
+import { ScaleData } from "@/atoms/userdata";
 import {
   FieldChromaMultiplier,
   FieldHue,
