@@ -1,7 +1,8 @@
-import chroma from "chroma-js";
 import { atom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import { defaultScales } from "./defaultScales";
+import { formatHex, type Oklch } from "culori";
+import { clamp } from "lodash";
 
 export interface ScaleData {
   name: string;
@@ -11,7 +12,7 @@ export interface ScaleData {
 }
 
 export const defaultChromasMaxPerLevel = [
-  10, 25, 45, 70, 85, 95, 100, 97, 85, 65, 45, 30,
+  0.02, 0.05, 0.09, 0.14, 0.17, 0.19, 0.2, 0.2, 0.17, 0.13, 0.09, 0.06,
 ];
 export const defaultLevels = [2, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 95];
 
@@ -24,7 +25,7 @@ export const atomUserData = atomWithStorage<ScaleData[]>(
 
 export interface ScaleDataWithComputedData extends ScaleData {
   levels: number[];
-  colors: chroma.Color[];
+  colors: Oklch[];
 }
 
 export const allColors = atom<ScaleDataWithComputedData[]>((get) => {
@@ -38,13 +39,10 @@ export const allColors = atom<ScaleDataWithComputedData[]>((get) => {
       chromaMaxPerLevel,
       levels,
       colors: levels.map((level, i) => {
-        const lightness = 100 - level;
-        const chromaValue = Math.max(
-          0.5,
-          Math.min((chromaMaxPerLevel ?? defaultChromasMaxPerLevel)[i], 100) *
-            chromaMultiplier
-        );
-        return chroma.lch(lightness, chromaValue, hue);
+        const l = (100 - level) / 100;
+        const c = chromaMaxPerLevel[i] * chromaMultiplier;
+        const h = hue;
+        return { mode: "oklch", l, c, h };
       }),
     };
   });
@@ -62,7 +60,9 @@ export const exportScalesAsSVG = (scales: ScaleDataWithComputedData[]) =>
         const y = 0;
         return `<rect id="level ${
           levels[i]
-        }" width="100" height="100" x="${x}" y="${y}" fill="${c.hex()}" />`;
+        }" width="100" height="100" x="${x}" y="${y}" fill="${formatHex(
+          c
+        )}" />`;
       });
       return `<g id="Scale with Hue ${scale.hue}" y="${groupY}">${content}</g>`;
     })

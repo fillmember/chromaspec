@@ -10,6 +10,9 @@ export const SiteHeader = () => {
         Chromaspec
       </h1>
       <nav className="col-span-full flex font-mono">
+        <Link className={clsLink} href="/levels" shallow>
+          Levels
+        </Link>
         <Link className={clsLink} href="/palette" shallow>
           Palette
         </Link>

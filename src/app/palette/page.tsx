@@ -7,7 +7,6 @@ import {
   FieldName,
 } from "@/components/RowScale";
 import { useUserData } from "@/utils/useUserData";
-import { useAtom } from "jotai";
 import { clamp, round } from "lodash";
 
 const hues = [0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330, 360];
@@ -21,7 +20,7 @@ const styleLCHGradient = {
 };
 
 export default function PageInfo() {
-  const { scales, addNewScale, updateScale, deleteScale } = useUserData();
+  const { scales, updateScale, deleteScale } = useUserData();
   return (
     <div className="grid md:grid-cols-2 gap-8 m-8">
       <figure
@@ -43,7 +42,7 @@ export default function PageInfo() {
             deleteScale: () => deleteScale(index),
           };
           return (
-            <li className="grid gap-1">
+            <li className="grid gap-1" key={index}>
               <FieldName key={index} {...props} />
               <FieldHue key={index} {...props} />
               <FieldChromaMultiplier key={index} {...props} />

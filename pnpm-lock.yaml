@@ -14,12 +14,12 @@ importers:
       '@use-gesture/react':
         specifier: ^10.3.1
         version: 10.3.1(react@18.3.1)
-      chroma-js:
-        specifier: 2.6.1-0
-        version: 2.6.1-0
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
+      culori:
+        specifier: ^4.0.1
+        version: 4.0.1
       immer:
         specifier: ^10.1.1
         version: 10.1.1
@@ -48,9 +48,9 @@ importers:
         specifier: ^17.5.1
         version: 17.5.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
     devDependencies:
-      '@types/chroma-js':
-        specifier: ^2.4.4
-        version: 2.4.4
+      '@types/culori':
+        specifier: ^2.1.1
+        version: 2.1.1
       '@types/lodash':
         specifier: ^4.17.7
         version: 4.17.7
@@ -295,8 +295,8 @@ packages:
   '@tanstack/virtual-core@3.9.0':
     resolution: {integrity: sha512-Saga7/QRGej/IDCVP5BgJ1oDqlDT2d9rQyoflS3fgMS8ntJ8JGw/LBqK2GorHa06+VrNFc0tGz65XQHJQJetFQ==}
 
-  '@types/chroma-js@2.4.4':
-    resolution: {integrity: sha512-/DTccpHTaKomqussrn+ciEvfW4k6NAHzNzs/sts1TCqg333qNxOhy8TNIoQCmbGG3Tl8KdEhkGAssb1n3mTXiQ==}
+  '@types/culori@2.1.1':
+    resolution: {integrity: sha512-NzLYD0vNHLxTdPp8+RlvGbR2NfOZkwxcYGFwxNtm+WH2NuUNV8785zv1h0sulFQ5aFQ9n/jNDUuJeo3Bh7+oFA==}
 
   '@types/js-cookie@2.2.7':
     resolution: {integrity: sha512-aLkWa0C0vO5b4Sr798E26QgOkss68Un0bLjs7u9qxzPT5CG+8DuNTffWES58YzJs3hrVAOs1wonycqEBqNJubA==}
@@ -503,9 +503,6 @@ packages:
     resolution: {integrity: sha512-7VT13fmjotKpGipCW9JEQAusEPE+Ei8nl6/g4FBAmIm0GOOLMua9NDDo/DWp0ZAxCr3cPq5ZpBqmPAQgDda2Pw==}
     engines: {node: '>= 8.10.0'}
 
-  chroma-js@2.6.1-0:
-    resolution: {integrity: sha512-5Mzg0TdSMQtpgkQmAAcW7O62owRhwwENrK/T/fLtXuIKQar7EYyzN3YjiCN9FafZIcBBxIITp5r5fP9kybPE7g==}
-
   client-only@0.0.1:
     resolution: {integrity: sha512-IV3Ou0jSMzZrd3pZ48nLkT9DA7Ag1pnPzaiQhpW7c3RbcqqzvzzVu+L8gfqMp/8IM2MQtSiqaCxrrcfu8I8rMA==}
 
@@ -548,6 +545,10 @@ packages:
 
   csstype@3.1.3:
     resolution: {integrity: sha512-M1uQkMl8rQK/szD0LNhtqxIPLpimGm8sOBwU7lLnCpSbTyY3yeU1Vc7l4KT5zT4s/yOxHH5O7tIuuLOCnLADRw==}
+
+  culori@4.0.1:
+    resolution: {integrity: sha512-LSnjA6HuIUOlkfKVbzi2OlToZE8OjFi667JWN9qNymXVXzGDmvuP60SSgC+e92sd7B7158f7Fy3Mb6rXS5EDPw==}
+    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
 
   damerau-levenshtein@1.0.8:
     resolution: {integrity: sha512-sdQSFB7+llfUcQHUQO3+B8ERRj0Oa4w9POWMI/puGtuf7gFywGmkaLCElnudfTiKZV+NvHqL0ifzdrI8Ro7ESA==}
@@ -1989,7 +1990,7 @@ snapshots:
 
   '@tanstack/virtual-core@3.9.0': {}
 
-  '@types/chroma-js@2.4.4': {}
+  '@types/culori@2.1.1': {}
 
   '@types/js-cookie@2.2.7': {}
 
@@ -2232,8 +2233,6 @@ snapshots:
     optionalDependencies:
       fsevents: 2.3.3
 
-  chroma-js@2.6.1-0: {}
-
   client-only@0.0.1: {}
 
   clsx@2.1.1: {}
@@ -2270,6 +2269,8 @@ snapshots:
   cssesc@3.0.0: {}
 
   csstype@3.1.3: {}
+
+  culori@4.0.1: {}
 
   damerau-levenshtein@1.0.8: {}
 
