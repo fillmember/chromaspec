@@ -148,13 +148,13 @@ export function RowScale(props: IRowScale) {
         {levels.map((level, i) => {
           const color = colors[i];
           const hex = formatHex(color);
-          const copyStringLCH = formatCss(color);
+          const cssOKLCH = formatCss(color);
           const relativeLuminance = round(wcagLuminance(color), 2);
           return (
             <li className="text-sm space-y-1 flex flex-col" key={level}>
               <div
                 className="w-full min-h-9 flex-grow rounded border touch-none"
-                style={{ background: copyStringLCH }}
+                style={{ background: cssOKLCH }}
               />
               {dataPointVisibility.length > 0 && (
                 <dl
@@ -170,18 +170,18 @@ export function RowScale(props: IRowScale) {
                     <DtDd
                       term="L"
                       desc={round(color.l, 2)}
-                      copyString={copyStringLCH}
+                      copyString={cssOKLCH}
                     />
                   )}
                   {dataPointVisibility.includes(EnumViewDataPoint.LCH_C) && (
                     <DtDd
                       term="C"
                       desc={round(color.c, 2)}
-                      copyString={copyStringLCH}
+                      copyString={cssOKLCH}
                     />
                   )}
                   {dataPointVisibility.includes(EnumViewDataPoint.LCH_H) && (
-                    <DtDd term="H" desc={color.h} copyString={copyStringLCH} />
+                    <DtDd term="H" desc={color.h} copyString={cssOKLCH} />
                   )}
                   {dataPointVisibility.includes(EnumViewDataPoint.Hex) && (
                     <DtDd
