@@ -7,7 +7,7 @@ import {
   ListboxOption,
   ListboxOptions,
 } from "@headlessui/react";
-import { type Oklch, wcagContrast, formatHex } from "culori";
+import { type Oklch, wcagContrast, formatCss } from "culori";
 import clsx from "clsx";
 import { useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
@@ -67,8 +67,8 @@ const Combinations = ({
       </header>
       <ul className="flex flex-wrap gap-2">
         {combinations.map(({ bg, bgLevel, fg, fgLevel, contrast }, index) => {
-          const hexBg = formatHex(bg);
-          const hexFg = formatHex(fg);
+          const hexBg = formatCss(bg);
+          const hexFg = formatCss(fg);
           return (
             <li
               key={index}
@@ -102,7 +102,7 @@ const ScaleDisplay = ({
   return (
     <div
       className={clsx("rounded-full", className)}
-      style={{ backgroundColor: formatHex(color) }}
+      style={{ backgroundColor: formatCss(color) }}
     />
   );
 };
