@@ -11,5 +11,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: volta-cli/action@v4
+      - run: curl -fsSL https://get.pnpm.io/install.sh | sh -
       - run: pnpm install
       - run: pnpm lint
