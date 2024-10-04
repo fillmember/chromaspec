@@ -1,5 +1,5 @@
 import { listAscending } from "@/utils/autoName";
-import chroma from "chroma-js";
+import { oklch, formatHex } from "culori";
 
 const svgSize = 500;
 const center = svgSize / 2;
@@ -10,7 +10,7 @@ const textRadius = 220;
 const segments = listAscending.map((color, index, arr) => {
   const rangeMin = arr[index - 1]?.rangeMax ?? 0;
   const hue = (rangeMin + color.rangeMax) / 2;
-  const fill = chroma.lch(50, 100, hue);
+  const fill = oklch({ mode: "oklch", l: 0.5, c: 0.4, h: hue }); //50, 100, hue
   const angleStart = (rangeMin / 360) * 2 * Math.PI;
   const angleEnd = (color.rangeMax / 360) * 2 * Math.PI;
 
@@ -44,7 +44,7 @@ const segments = listAscending.map((color, index, arr) => {
 
   return (
     <g key={index}>
-      <path d={pathData} fill={fill.hex()} />
+      <path d={pathData} fill={formatHex(fill)} />
       <text
         x={textX}
         y={textY}

@@ -7,7 +7,7 @@ import {
   ListboxOption,
   ListboxOptions,
 } from "@headlessui/react";
-import chroma from "chroma-js";
+import { type Oklch, wcagContrast, formatHex } from "culori";
 import clsx from "clsx";
 import { useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
@@ -17,9 +17,9 @@ import { ReactNode, useMemo } from "react";
 import { LuChevronDown } from "react-icons/lu";
 
 interface Combination {
-  bg: chroma.Color;
+  bg: Oklch;
   bgLevel: number;
-  fg: chroma.Color;
+  fg: Oklch;
   fgLevel: number;
   contrast: number;
 }
@@ -33,7 +33,7 @@ const getCombosWithContrastRatioOrMore = (
   const result: Combination[] = [];
   bgScale.colors.forEach((bg, bgIndex) => {
     fgScale.colors.forEach((fg, fgIndex) => {
-      const contrast = chroma.contrast(bg, fg);
+      const contrast = wcagContrast(bg, fg);
       if (contrast >= minContrast && contrast < maxContrast) {
         result.push({
           bg,
@@ -66,20 +66,24 @@ const Combinations = ({
         <span>{combinations.length} combos</span>
       </header>
       <ul className="flex flex-wrap gap-2">
-        {combinations.map(({ bg, bgLevel, fg, fgLevel, contrast }, index) => (
-          <li
-            key={index}
-            className="p-1 pt-2 rounded w-24 text-center"
-            style={{ backgroundColor: bg.hex(), color: fg.hex() }}
-          >
-            <div className="text-lg font-bold mb-1">
-              <span>lv.{fgLevel}</span>
-              <hr style={{ borderColor: fg.hex() }} />
-              <span>lv.{bgLevel}</span>
-            </div>
-            <span className="text-xs">{round(contrast, 1)}</span>
-          </li>
-        ))}
+        {combinations.map(({ bg, bgLevel, fg, fgLevel, contrast }, index) => {
+          const hexBg = formatHex(bg);
+          const hexFg = formatHex(fg);
+          return (
+            <li
+              key={index}
+              className="p-1 pt-2 rounded w-24 text-center"
+              style={{ backgroundColor: hexBg, color: hexFg }}
+            >
+              <div className="text-lg font-bold mb-1">
+                <span>lv.{fgLevel}</span>
+                <hr style={{ borderColor: hexFg }} />
+                <span>lv.{bgLevel}</span>
+              </div>
+              <span className="text-xs">{round(contrast, 1)}</span>
+            </li>
+          );
+        })}
       </ul>
     </section>
   );
@@ -98,7 +102,7 @@ const ScaleDisplay = ({
   return (
     <div
       className={clsx("rounded-full", className)}
-      style={{ backgroundColor: color.hex() }}
+      style={{ backgroundColor: formatHex(color) }}
     />
   );
 };
@@ -164,7 +168,6 @@ export default function PageCombinations() {
     if (!bgScaleName || !fgScaleName) return {};
     const bgScale = scales.find((s) => s.name === bgScaleName);
     const fgScale = scales.find((s) => s.name === fgScaleName);
-    console.log({ bgScaleName, bgScale, fgScaleName, fgScale });
     if (!bgScale || !fgScale) return {};
     return {
       "7": getCombosWithContrastRatioOrMore(bgScale, fgScale, 7),

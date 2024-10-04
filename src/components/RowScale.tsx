@@ -31,6 +31,7 @@ import { LuCheck, LuShare, LuSparkles } from "react-icons/lu";
 import { DtDd } from "./DtDd";
 import { RowWithLevelGrid } from "./RowWithLevelGrid";
 import { autoName } from "@/utils/autoName";
+import { formatCss, formatHex, wcagLuminance } from "culori";
 
 const clsHeaderField =
   "flex items-center gap-2 rounded-lg bg-black/5 px-2 py-1.5 text-sm";
@@ -80,8 +81,8 @@ export function RowScale(props: IRowScale) {
                       type="range"
                       className="slider-vertical"
                       min={0}
-                      max={100}
-                      step={1}
+                      max={0.4}
+                      step={0.01}
                       value={value}
                       onChange={(evt) => {
                         const newArray = chromaMaxPerLevel.map(
@@ -94,7 +95,9 @@ export function RowScale(props: IRowScale) {
                         updateScale({ chromaMaxPerLevel: newArray });
                       }}
                     />
-                    <output className="font-mono">{value}</output>
+                    <output className="font-mono">
+                      {round(value * 100, 0)}
+                    </output>
                   </Field>
                 );
               })}
@@ -144,19 +147,14 @@ export function RowScale(props: IRowScale) {
       <ol className="contents">
         {levels.map((level, i) => {
           const color = colors[i];
-          const hex = color.hex().toUpperCase();
-          const colorLCH = color.lch();
-          const strLCH = colorLCH
-            .map((x) => round(x, 1))
-            .map((x) => padStart(x.toFixed(1), 2, " "));
-          // @ts-ignore
-          const copyStringLCH = color.css("lch");
-          const relativeLuminance = round(color.luminance(), 2);
+          const hex = formatHex(color);
+          const copyStringLCH = formatCss(color);
+          const relativeLuminance = round(wcagLuminance(color), 2);
           return (
             <li className="text-sm space-y-1 flex flex-col" key={level}>
               <div
                 className="w-full min-h-9 flex-grow rounded border touch-none"
-                style={{ background: `lch(${strLCH.join(" ")})` }}
+                style={{ background: copyStringLCH }}
               />
               {dataPointVisibility.length > 0 && (
                 <dl
@@ -171,23 +169,19 @@ export function RowScale(props: IRowScale) {
                   {dataPointVisibility.includes(EnumViewDataPoint.LCH_L) && (
                     <DtDd
                       term="L"
-                      desc={strLCH[0]}
+                      desc={round(color.l, 2)}
                       copyString={copyStringLCH}
                     />
                   )}
                   {dataPointVisibility.includes(EnumViewDataPoint.LCH_C) && (
                     <DtDd
                       term="C"
-                      desc={strLCH[1]}
+                      desc={round(color.c, 2)}
                       copyString={copyStringLCH}
                     />
                   )}
                   {dataPointVisibility.includes(EnumViewDataPoint.LCH_H) && (
-                    <DtDd
-                      term="H"
-                      desc={strLCH[2]}
-                      copyString={copyStringLCH}
-                    />
+                    <DtDd term="H" desc={color.h} copyString={copyStringLCH} />
                   )}
                   {dataPointVisibility.includes(EnumViewDataPoint.Hex) && (
                     <DtDd
