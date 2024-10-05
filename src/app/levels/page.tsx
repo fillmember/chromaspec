@@ -1,13 +1,15 @@
 "use client";
 
-import { atomLevels } from "@/atoms/userdata";
+import { atomLevels, defaultLevels } from "@/atoms/userdata";
 import { Input } from "@headlessui/react";
 import { formatCss } from "culori";
 import { produce } from "immer";
 import { useAtom } from "jotai/react";
+import sortedUniq from "lodash/sortedUniq";
+import { LuListOrdered, LuPlusCircle, LuRefreshCcw } from "react-icons/lu";
 
 export default function PageLevels() {
-  const [levels] = useAtom(atomLevels);
+  const [levels, setLevels] = useAtom(atomLevels);
   return (
     <section className="my-8 grid grid-cols-12 gap-8">
       <header className="prose col-span-4">
@@ -23,7 +25,7 @@ export default function PageLevels() {
           <code>#000000</code>)
         </p>
       </header>
-      <table className="col-span-6">
+      <table className="col-span-5">
         <thead className="text-left">
           <tr>
             <th>level</th>
@@ -36,9 +38,31 @@ export default function PageLevels() {
           ))}
         </tbody>
       </table>
-      <aside className="col-span-2 grid grid-cols-3 gap-1">
-        <button className="btn col-span-full">sort</button>
-        <button className="btn col-span-full">reset to default</button>
+      <aside className="col-span-3 space-y-1">
+        <button
+          className="btn btn-full"
+          onClick={() => setLevels([...levels, 100])}
+        >
+          <LuPlusCircle /> add level
+        </button>
+        <button
+          className="btn btn-full"
+          onClick={() => {
+            const newLevels = levels.map((x) => x);
+            newLevels.sort((a, b) => a - b);
+            setLevels(sortedUniq(newLevels));
+          }}
+        >
+          <LuListOrdered /> sort & dedupe
+        </button>
+        <button
+          className="btn btn-full"
+          onClick={() => {
+            setLevels(defaultLevels);
+          }}
+        >
+          <LuRefreshCcw /> reset to default
+        </button>
       </aside>
     </section>
   );

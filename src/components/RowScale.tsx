@@ -70,7 +70,8 @@ export function RowScale(props: IRowScale) {
             className="w-96 space-y-1 rounded-lg border bg-white p-3 text-sm shadow-lg transition duration-150 data-[closed]:scale-90 data-[closed]:opacity-0"
           >
             <div className="grid" style={containerStyle}>
-              {chromaMaxPerLevel.map((value, index) => {
+              {levels.map((lvl, index) => {
+                const value = chromaMaxPerLevel[index] ?? 0;
                 return (
                   <Field
                     key={index}
@@ -85,13 +86,8 @@ export function RowScale(props: IRowScale) {
                       step={0.01}
                       value={value}
                       onChange={(evt) => {
-                        const newArray = chromaMaxPerLevel.map(
-                          (originalValue, _index) => {
-                            return _index === index
-                              ? parseFloat(evt.target.value)
-                              : originalValue;
-                          },
-                        );
+                        const newArray = chromaMaxPerLevel.map((x) => x);
+                        newArray[index] = parseFloat(evt.target.value);
                         updateScale({ chromaMaxPerLevel: newArray });
                       }}
                     />
