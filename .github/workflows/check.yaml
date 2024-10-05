@@ -16,3 +16,4 @@ jobs:
           version: 9
       - run: pnpm install
       - run: pnpm lint
+      - run: pnpx prettier . --check
