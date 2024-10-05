@@ -27,7 +27,7 @@ import {
 import clsx from "clsx";
 import { useAtom } from "jotai";
 import { padStart, round } from "lodash";
-import { LuCheck, LuShare, LuSparkles } from "react-icons/lu";
+import { LuCheck, LuShare, LuSparkles, LuTrash } from "react-icons/lu";
 import { DtDd } from "./DtDd";
 import { RowWithLevelGrid } from "./RowWithLevelGrid";
 import { autoName } from "@/utils/autoName";
@@ -67,14 +67,14 @@ export function RowScale(props: IRowScale) {
           <PopoverPanel
             anchor="bottom start"
             transition
-            className="bg-white border rounded-lg p-3 space-y-1 text-sm w-96 shadow-lg transition duration-150 data-[closed]:scale-90 data-[closed]:opacity-0"
+            className="w-96 space-y-1 rounded-lg border bg-white p-3 text-sm shadow-lg transition duration-150 data-[closed]:scale-90 data-[closed]:opacity-0"
           >
             <div className="grid" style={containerStyle}>
               {chromaMaxPerLevel.map((value, index) => {
                 return (
                   <Field
                     key={index}
-                    className="flex flex-col text-sm items-center justify-between"
+                    className="flex flex-col items-center justify-between text-sm"
                   >
                     <Label className="text-zinc-700">{levels[index]}</Label>
                     <Input
@@ -90,7 +90,7 @@ export function RowScale(props: IRowScale) {
                             return _index === index
                               ? parseFloat(evt.target.value)
                               : originalValue;
-                          }
+                          },
                         );
                         updateScale({ chromaMaxPerLevel: newArray });
                       }}
@@ -103,7 +103,7 @@ export function RowScale(props: IRowScale) {
               })}
             </div>
             <button
-              className="w-full border p-1 px-2 rounded-md"
+              className="w-full rounded-md border p-1 px-2"
               onClick={() => {
                 updateScale({ chromaMaxPerLevel: defaultChromasMaxPerLevel });
               }}
@@ -115,21 +115,22 @@ export function RowScale(props: IRowScale) {
 
         <div className="flex flex-wrap gap-1">
           <button
-            className="text-sm py-1.5 px-2 bg-black/5 rounded-lg hover:bg-black/10 flex items-center gap-2"
+            className="btn btn-sm"
             onClick={() => {
               navigator.clipboard.writeText(exportScalesAsSVG([scale]));
             }}
           >
-            <LuShare className="inline" /> Copy SVG
+            <LuShare /> Copy SVG
           </button>
           <Popover className="contents">
-            <PopoverButton className="text-sm py-1.5 px-2 bg-black/5 rounded-lg hover:bg-black/10 flex items-center gap-2">
+            <PopoverButton className="btn btn-sm">
+              <LuTrash />
               Delete
             </PopoverButton>
             <PopoverPanel
               anchor="bottom start"
               transition
-              className="flex items-center gap-1 bg-zinc-300 text-red-900 p-2 text-sm shadow-lg rounded-lg data-[closed]:scale-95"
+              className="flex items-center gap-1 rounded-lg bg-zinc-300 p-2 text-sm text-red-900 shadow-lg data-[closed]:scale-95"
             >
               Confirm Delete Scale?
               <PopoverButton className="hover:text-green-500">No</PopoverButton>
@@ -151,20 +152,20 @@ export function RowScale(props: IRowScale) {
           const cssOKLCH = formatCss(color);
           const relativeLuminance = round(wcagLuminance(color), 2);
           return (
-            <li className="text-sm space-y-1 flex flex-col" key={level}>
+            <li className="flex flex-col space-y-1 text-sm" key={level}>
               <div
-                className="w-full min-h-9 flex-grow rounded border touch-none"
+                className="min-h-9 w-full flex-grow touch-none rounded border"
                 style={{ background: cssOKLCH }}
               />
               {dataPointVisibility.length > 0 && (
                 <dl
                   className={clsx(
-                    "grid grid-cols-3 gap-1 [&_dd]:text-right font-mono px-2 [&_dt]:text-gray-500 [&_dd]:col-span-2",
-                    "select-none"
+                    "grid grid-cols-3 gap-1 px-2 font-mono [&_dd]:col-span-2 [&_dd]:text-right [&_dt]:text-gray-500",
+                    "select-none",
                   )}
                 >
                   {dataPointVisibility.includes(
-                    EnumViewDataPoint.ScaleLevel
+                    EnumViewDataPoint.ScaleLevel,
                   ) && <DtDd term="lv." desc={level} />}
                   {dataPointVisibility.includes(EnumViewDataPoint.LCH_L) && (
                     <DtDd
@@ -191,7 +192,7 @@ export function RowScale(props: IRowScale) {
                     />
                   )}
                   {dataPointVisibility.includes(
-                    EnumViewDataPoint.WCAG2_Luminance
+                    EnumViewDataPoint.WCAG2_Luminance,
                   ) && (
                     <DtDd
                       term={
@@ -246,7 +247,7 @@ export function FieldName(props: IRowScaleField) {
     <Field className={clsHeaderField}>
       <Label>Name</Label>
       <Input
-        className="bg-transparent border-b border-zinc-300 w-full px-1 py-.5"
+        className="py-.5 w-full border-b border-zinc-300 bg-transparent px-1"
         value={name}
         onChange={(evt) => updateScale({ name: evt.target.value })}
       />
@@ -290,8 +291,8 @@ export function FieldChromaMultiplier(props: IRowScaleField) {
       >
         <ListboxButton
           className={clsx(
-            "relative block text-left text-sm/6 text-black font-mono",
-            "focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-black/25"
+            "relative block text-left font-mono text-sm/6 text-black",
+            "focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-black/25",
           )}
         >
           {padStart(round(chromaMultiplier * 100, 1).toString(), 3, "0")}%
@@ -300,7 +301,7 @@ export function FieldChromaMultiplier(props: IRowScaleField) {
           transition
           className={clsx(
             "rounded-xl border border-black/5 bg-white p-1 [--anchor-gap:var(--spacing-1)] focus:outline-none",
-            "transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0"
+            "transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0",
           )}
           anchor="bottom"
         >
@@ -309,7 +310,7 @@ export function FieldChromaMultiplier(props: IRowScaleField) {
               <ListboxOption
                 key={value}
                 value={value}
-                className="group flex cursor-default items-center gap-2 rounded-lg py-1.5 px-3 select-none data-[focus]:bg-black/10"
+                className="group flex cursor-default select-none items-center gap-2 rounded-lg px-3 py-1.5 data-[focus]:bg-black/10"
               >
                 <LuCheck className="invisible size-4 text-black group-data-[selected]:visible" />
                 <div className="text-sm/6 text-black">{value * 100}%</div>

@@ -8,6 +8,7 @@
     "start": "next start",
     "format": "prettier -w .",
     "lint": "npx oxlint && next lint",
+    "check": "npx oxlint && prettier . --check",
     "prepare": "husky"
   },
   "dependencies": {

@@ -9,3 +9,12 @@
     vertical-align: middle;
   }
 }
+
+@layer components {
+  .btn {
+    @apply flex items-center gap-1 rounded-lg border border-zinc-200 bg-zinc-100 p-2 text-sm text-zinc-800 hover:bg-zinc-200 active:bg-zinc-100;
+  }
+  .btn-sm {
+    @apply px-2 py-1;
+  }
+}
