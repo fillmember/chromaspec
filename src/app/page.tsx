@@ -13,30 +13,27 @@ import { LuEye, LuPlusCircle } from "react-icons/lu";
 
 export default function Page() {
   const [dataPointVisibility, setDataPointVisibility] = useAtom(
-    atomDataPointVisibility
+    atomDataPointVisibility,
   );
   const { addNewScale, updateScale, deleteScale } = useUserData();
   const [data] = useAtom(allColors);
   return (
     <>
-      <section className="mb-2 flex gap-4 justify-between items-center">
-        <div className="flex gap-2 items-center">
-          <button
-            className="border p-2 border-zinc-200 bg-zinc-100 text-zinc-800 text-sm flex gap-1 items-center rounded-lg hover:bg-zinc-200 active:bg-zinc-100"
-            onClick={addNewScale}
-          >
+      <section className="mb-2 flex items-center justify-between gap-4">
+        <div className="flex items-center gap-2">
+          <button className="btn" onClick={addNewScale}>
             <LuPlusCircle />
             add scale
           </button>
         </div>
-        <Fieldset className="flex gap-2 items-center">
+        <Fieldset className="flex items-center gap-2">
           <Legend>
             <LuEye />
           </Legend>
           {uiDataEnumViewDataPoint.map(({ type, label }) => {
             const checked = dataPointVisibility.includes(type);
             return (
-              <Field className="flex gap-1 items-center" key={type}>
+              <Field className="flex items-center gap-1" key={type}>
                 <Input
                   type="checkbox"
                   checked={checked}
@@ -45,7 +42,7 @@ export default function Page() {
                       setDataPointVisibility([...dataPointVisibility, type]);
                     } else {
                       setDataPointVisibility(
-                        dataPointVisibility.filter((item) => item !== type)
+                        dataPointVisibility.filter((item) => item !== type),
                       );
                     }
                   }}

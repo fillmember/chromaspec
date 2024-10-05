@@ -20,5 +20,9 @@ export const uiDataEnumViewDataPoint = [
 
 export const atomDataPointVisibility = atomWithStorage<EnumViewDataPoint[]>(
   "chromaspec-display-settings-datapoint",
-  [EnumViewDataPoint.ScaleLevel, EnumViewDataPoint.LCH_L, EnumViewDataPoint.Hex]
+  [
+    EnumViewDataPoint.ScaleLevel,
+    EnumViewDataPoint.LCH_L,
+    EnumViewDataPoint.Hex,
+  ],
 );

@@ -22,12 +22,12 @@ const styleLCHGradient = {
 export default function PageInfo() {
   const { scales, updateScale, deleteScale } = useUserData();
   return (
-    <div className="grid md:grid-cols-2 gap-8 m-8">
+    <div className="m-8 grid gap-8 md:grid-cols-2">
       <figure
         style={styleLCHGradient}
-        className="rounded-full flex items-center justify-center aspect-square"
+        className="flex aspect-square items-center justify-center rounded-full"
       >
-        <div className="size-[95%] rounded-full bg-white relative">
+        <div className="relative size-[95%] rounded-full bg-white">
           {scales.map((scale, index) => (
             <ColorScale key={index} {...scale} index={index} />
           ))}
@@ -59,7 +59,7 @@ const ColorScale = (props: ScaleData & { index: number }) => {
   const rotation = hue - 90;
   return (
     <div
-      className="w-1/2 absolute top-[50%] left-[50%] flex items-center group"
+      className="group absolute left-[50%] top-[50%] flex w-1/2 items-center"
       style={{
         transformOrigin: "0% 50%",
         transform: `translateY(-50%) rotate(${rotation}deg)`,
@@ -70,13 +70,13 @@ const ColorScale = (props: ScaleData & { index: number }) => {
         style={{ width: `${chromaMultiplier * 50}%`, height: 1 }}
       />
       <div
-        className="size-8 border border-zinc-400 flex-shrink-0 rounded-full group-hover:border-zinc-800"
+        className="size-8 flex-shrink-0 rounded-full border border-zinc-400 group-hover:border-zinc-800"
         style={{
           background: fnHueToCSSLCHString(hue, chromaMultiplier),
         }}
       />
       <span
-        className="pointer-events-none invisible group-hover:visible ml-1"
+        className="pointer-events-none invisible ml-1 group-hover:visible"
         style={{ transform: `rotate(${-rotation}deg)` }}
       >
         {name}

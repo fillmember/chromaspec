@@ -28,7 +28,7 @@ const getCombosWithContrastRatioOrMore = (
   bgScale: ScaleDataWithComputedData,
   fgScale: ScaleDataWithComputedData,
   minContrast: number,
-  maxContrast = 21
+  maxContrast = 21,
 ): Combination[] => {
   const result: Combination[] = [];
   bgScale.colors.forEach((bg, bgIndex) => {
@@ -61,8 +61,8 @@ const Combinations = ({
   return (
     <section>
       <header className="flex items-center gap-2">
-        <h3 className="font-bold my-4 text-lg w-24">{title}</h3>
-        <span className="text-zinc-700 flex-grow">{desc}</span>
+        <h3 className="my-4 w-24 text-lg font-bold">{title}</h3>
+        <span className="flex-grow text-zinc-700">{desc}</span>
         <span>{combinations.length} combos</span>
       </header>
       <ul className="flex flex-wrap gap-2">
@@ -72,10 +72,10 @@ const Combinations = ({
           return (
             <li
               key={index}
-              className="p-1 pt-2 rounded w-24 text-center"
+              className="w-24 rounded p-1 pt-2 text-center"
               style={{ backgroundColor: hexBg, color: hexFg }}
             >
-              <div className="text-lg font-bold mb-1">
+              <div className="mb-1 text-lg font-bold">
                 <span>lv.{fgLevel}</span>
                 <hr style={{ borderColor: hexFg }} />
                 <span>lv.{bgLevel}</span>
@@ -120,7 +120,7 @@ const ScaleSelect = ({
   return (
     <Listbox value={value} onChange={onChange}>
       <ListboxButton
-        className="pb-1 px-2 border-b border-zinc-700 inline-flex items-center gap-4"
+        className="inline-flex items-center gap-4 border-b border-zinc-700 px-2 pb-1"
         disabled={scales.length === 0}
       >
         {!selectedScale && <div className="h-8 text-zinc-600">empty</div>}
@@ -134,13 +134,13 @@ const ScaleSelect = ({
       </ListboxButton>
       <ListboxOptions
         anchor="bottom start"
-        className="rounded-lg border text-lg bg-white shadow-lg"
+        className="rounded-lg border bg-white text-lg shadow-lg"
       >
         {scales.map((candidate: ScaleDataWithComputedData, index) => (
           <ListboxOption
             key={index}
             value={candidate.name}
-            className="flex items-center gap-4 py-2 px-4 hover:bg-zinc-100 cursor-pointer"
+            className="flex cursor-pointer items-center gap-4 px-4 py-2 hover:bg-zinc-100"
           >
             <ScaleDisplay scale={candidate} />
             {candidate.name}
@@ -153,11 +153,11 @@ const ScaleSelect = ({
 
 const atomSelectedBGScaleName = atomWithStorage<string>(
   "chromaspec-combo-bg-scale",
-  ""
+  "",
 );
 const atomSelectedFGScaleName = atomWithStorage<string>(
   "chromaspec-combo-fg-scale",
-  ""
+  "",
 );
 
 export default function PageCombinations() {
@@ -176,8 +176,8 @@ export default function PageCombinations() {
     };
   }, [scales, bgScaleName, fgScaleName]);
   return (
-    <section className="space-y-8 my-8">
-      <h2 className="text-2xl font-medium flex items-center gap-1">
+    <section className="my-8 space-y-8">
+      <h2 className="flex items-center gap-1 text-2xl font-medium">
         combos:{" "}
         <ScaleSelect
           scales={scales}
@@ -194,7 +194,7 @@ export default function PageCombinations() {
       {scales.length === 0 && (
         <section>
           <h2 className="text-xl">No Scales Available</h2>
-          <Link href="/" className="text-lg underline text-blue-800">
+          <Link href="/" className="text-lg text-blue-800 underline">
             Go back to Scales
           </Link>
         </section>

@@ -15,7 +15,7 @@ type DragMeasurementData = {
 };
 
 export const useDragMeasurement = (
-  parentRef?: MutableRefObject<HTMLDivElement | null>
+  parentRef?: MutableRefObject<HTMLDivElement | null>,
 ): {
   bind: ReturnType<typeof useGesture>;
 } & DragMeasurementData => {
@@ -55,7 +55,7 @@ export const useDragMeasurement = (
         setEnd(null);
       },
     },
-    { drag: { axis: "x" } }
+    { drag: { axis: "x" } },
   );
   const contrastRatio = useMemo(() => {
     if (start && end) {
@@ -77,10 +77,10 @@ export const DragMeasurementDisplay = ({
   end,
 }: DragMeasurementData) => {
   return (
-    <div className="absolute inset-0 pointer-events-none grid grid-cols-12 gap-1">
+    <div className="pointer-events-none absolute inset-0 grid grid-cols-12 gap-1">
       {start?.mouseData && (
         <div
-          className="absolute size-4 bg-white/5 border-2 border-black rounded-full ring ring-white"
+          className="absolute size-4 rounded-full border-2 border-black bg-white/5 ring ring-white"
           style={{
             left: start?.mouseData[0] - 8,
             top: start?.mouseData[1] - 8,
@@ -89,7 +89,7 @@ export const DragMeasurementDisplay = ({
       )}
       {end?.mouseData && (
         <div
-          className="absolute size-4 bg-white/5 border-2 border-black rounded-full ring ring-white"
+          className="absolute size-4 rounded-full border-2 border-black bg-white/5 ring ring-white"
           style={{
             left: end?.mouseData[0] - 8,
             top: end?.mouseData[1] - 8,
@@ -98,7 +98,7 @@ export const DragMeasurementDisplay = ({
       )}
       {start && end && contrastRatio && contrastRatio > 0 && (
         <div
-          className="text-sm p-2 bg-white border rounded absolute"
+          className="absolute rounded border bg-white p-2 text-sm"
           style={{
             left: (end.mouseData[0] + start.mouseData[0]) / 2,
             top: (end.mouseData[1] + start.mouseData[1]) / 2 - 16,

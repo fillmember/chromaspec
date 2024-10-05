@@ -19,7 +19,7 @@ export const atomLevels = atomWithStorage("chromaspec-levels", defaultLevels);
 
 export const atomUserData = atomWithStorage<ScaleData[]>(
   "chromaspec-scales-2",
-  defaultScales
+  defaultScales,
 );
 
 export interface ScaleDataWithComputedData extends ScaleData {
@@ -60,7 +60,7 @@ export const exportScalesAsSVG = (scales: ScaleDataWithComputedData[]) =>
         return `<rect id="level ${
           levels[i]
         }" width="100" height="100" x="${x}" y="${y}" fill="${formatHex(
-          c
+          c,
         )}" />`;
       });
       return `<g id="Scale with Hue ${scale.hue}" y="${groupY}">${content}</g>`;
