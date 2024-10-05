@@ -22,16 +22,16 @@ export const useUserData = () => {
           chromaMaxPerLevel: defaultChromasMaxPerLevel,
         },
       ]),
-    [],
+    [scales, setScales],
   );
   const updateScale = useCallback(
     (index: number, partialData: Partial<ScaleData>) =>
       setScales(setItemAtIndex(scales, index, partialData)),
-    [],
+    [scales, setScales],
   );
   const deleteScale = useCallback(
     (index: number) => setScales(deleteItemAtIndex(scales, index)),
-    [],
+    [scales, setScales],
   );
   return { scales, updateScale, addNewScale, deleteScale };
 };

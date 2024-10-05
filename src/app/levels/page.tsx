@@ -14,7 +14,7 @@ export default function PageLevels() {
         <h2>Levels</h2>
         <p>
           Change the level value of each step of the color scales here. Level
-          defines the step's color with the following formula:
+          defines the step&apos;s color with the following formula:
           <pre>
             <code>lightness = 100 - level</code>
           </pre>
