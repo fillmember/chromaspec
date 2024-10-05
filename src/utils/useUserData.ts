@@ -5,35 +5,33 @@ import {
   defaultChromasMaxPerLevel,
   ScaleData,
 } from "@/atoms/userdata";
-import { produce } from "immer";
 import { useAtom } from "jotai/react";
+import { deleteItemAtIndex, setItemAtIndex } from "./arrayManipulation";
+import { useCallback } from "react";
 
 export const useUserData = () => {
   const [scales, setScales] = useAtom(atomUserData);
-  const addNewScale = () =>
-    setScales([
-      ...scales,
-      {
-        name: "new scale",
-        hue: 0,
-        chromaMultiplier: 1,
-        chromaMaxPerLevel: defaultChromasMaxPerLevel,
-      },
-    ]);
-  const updateScale = (index: number, partialData: Partial<ScaleData>) =>
-    setScales(
-      produce<ScaleData[]>(scales, (draftState) => {
-        draftState[index] = {
-          ...draftState[index],
-          ...partialData,
-        };
-      })
-    );
-  const deleteScale = (index: number) =>
-    setScales(
-      produce<ScaleData[]>(scales, (draftState) => {
-        draftState.splice(index, 1);
-      })
-    );
+  const addNewScale = useCallback(
+    () =>
+      setScales([
+        ...scales,
+        {
+          name: "new scale",
+          hue: 0,
+          chromaMultiplier: 1,
+          chromaMaxPerLevel: defaultChromasMaxPerLevel,
+        },
+      ]),
+    [],
+  );
+  const updateScale = useCallback(
+    (index: number, partialData: Partial<ScaleData>) =>
+      setScales(setItemAtIndex(scales, index, partialData)),
+    [],
+  );
+  const deleteScale = useCallback(
+    (index: number) => setScales(deleteItemAtIndex(scales, index)),
+    [],
+  );
   return { scales, updateScale, addNewScale, deleteScale };
 };
