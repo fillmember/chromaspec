@@ -24,7 +24,7 @@ export const DtDd = ({
       >
         {desc}
         {!!copyString && (
-          <LuCopy className="absolute right-0 top-0 bottom-0 bg-white opacity-0 group-hover:opacity-100" />
+          <LuCopy className="absolute bottom-0 right-0 top-0 bg-white opacity-0 group-hover:opacity-100" />
         )}
       </dd>
     </>

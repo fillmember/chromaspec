@@ -5,8 +5,8 @@ const clsLink =
 
 export const SiteHeader = () => {
   return (
-    <header className="pb-1 mb-2 border-b border-zinc-700 flex justify-between items-center">
-      <h1 className="font-mono text-sm font-bold text-zinc-700 uppercase">
+    <header className="mb-2 flex items-center justify-between border-b border-zinc-700 pb-1">
+      <h1 className="font-mono text-sm font-bold uppercase text-zinc-700">
         Chromaspec
       </h1>
       <nav className="col-span-full flex font-mono">
