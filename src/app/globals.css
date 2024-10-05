@@ -17,4 +17,7 @@
   .btn-sm {
     @apply px-2 py-1;
   }
+  .btn-full {
+    @apply w-full justify-between;
+  }
 }
