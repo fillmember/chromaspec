@@ -22,7 +22,7 @@ export const atomDataPointVisibility = atomWithStorage<EnumViewDataPoint[]>(
   "chromaspec-display-settings-datapoint",
   [
     EnumViewDataPoint.ScaleLevel,
-    EnumViewDataPoint.LCH_L,
+    EnumViewDataPoint.LCH_C,
     EnumViewDataPoint.Hex,
   ],
 );
