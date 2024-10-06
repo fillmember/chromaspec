@@ -4,7 +4,12 @@ import { ScaleData } from "@/atoms/userdata";
 import { FieldName } from "@/components/RowScale";
 import { Slider } from "@/components/Slider";
 import { useUserData } from "@/utils/useUserData";
+import { DragConfig, GestureOptions, useDrag } from "@use-gesture/react";
 import { clampChroma, formatCss } from "culori";
+import { clamp, round } from "lodash";
+import { useMemo } from "react";
+import { useMeasure } from "react-use";
+import { UseMeasureResult } from "react-use/lib/useMeasure";
 
 const hues = [0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330, 360];
 const fnHueToCSSLCHString = (hue: number, saturation = 1) =>
@@ -25,16 +30,7 @@ export default function PageInfo() {
   const { scales, updateScale, deleteScale } = useUserData();
   return (
     <div className="m-8 grid gap-8 md:grid-cols-2">
-      <figure
-        style={styleLCHGradient}
-        className="flex aspect-square items-center justify-center rounded-full"
-      >
-        <div className="relative size-[95%] rounded-full bg-white">
-          {scales.map((scale, index) => (
-            <ColorScale key={index} {...scale} index={index} />
-          ))}
-        </div>
-      </figure>
+      <Wheel />
       <ol className="grid gap-4">
         {scales.map((scale, index) => {
           const props = {
@@ -90,37 +86,132 @@ export default function PageInfo() {
   );
 }
 
-const ColorScale = (props: ScaleData & { index: number }) => {
+const CONST_HANDLE_R = 20;
+
+const Wheel = () => {
+  const { scales, updateScale } = useUserData();
+  const [ref, size] = useMeasure<SVGSVGElement>();
+  const bag = useMemo(() => {
+    const unitR = (size.width - CONST_HANDLE_R * 2) / 3;
+    const originX = size.width / 2;
+    const originY = size.height / 2;
+    const bounds = {
+      left: CONST_HANDLE_R,
+      top: CONST_HANDLE_R,
+      right: size.width - CONST_HANDLE_R * 2,
+      bottom: size.height - CONST_HANDLE_R * 2,
+    };
+    return { unitR, originX, originY, bounds };
+  }, [size]);
+  return (
+    <figure
+      style={styleLCHGradient}
+      className="flex aspect-square items-center justify-center rounded-full"
+    >
+      <svg ref={ref} className="size-[95%] rounded-full bg-white">
+        <circle
+          fill="transparent"
+          strokeWidth={1}
+          stroke="#EEE"
+          cx={bag.originX}
+          cy={bag.originY}
+          r={bag.unitR}
+        />
+        <circle
+          fill="transparent"
+          strokeWidth={1}
+          stroke="#EEE"
+          cx={bag.originX}
+          cy={bag.originY}
+          r={bag.unitR * 1.5}
+        />
+        {scales.map((scale, index) => (
+          <ColorScale
+            key={index}
+            {...scale}
+            index={index}
+            {...bag}
+            updateScale={({ hue, multiplier }) => {
+              updateScale(index, {
+                hue,
+                chroma: { ...scale.chroma, multiplier },
+              });
+            }}
+          />
+        ))}
+      </svg>
+    </figure>
+  );
+};
+
+const ColorScale = (
+  props: ScaleData & {
+    index: number;
+    updateScale: (args: { hue: number; multiplier: number }) => void;
+    unitR: number;
+    originX: number;
+    originY: number;
+    bounds: DragConfig["bounds"];
+  },
+) => {
   const {
     hue,
-    name,
     chroma: { multiplier: chromaMultiplier },
+    unitR,
+    originX,
+    originY,
+    bounds,
+    updateScale,
   } = props;
   const rotation = hue - 90;
+  const r = unitR * chromaMultiplier;
+  const cx = originX + r * Math.cos(rotation * 0.0174533);
+  const cy = originY + r * Math.sin(rotation * 0.0174533);
+  const strokeWidth = 1;
+  const bind = useDrag(
+    (state) => {
+      const {
+        offset: [x, y],
+      } = state;
+      const multiplier = clamp(
+        round(
+          Math.sqrt(Math.pow(x - originX, 2) + Math.pow(y - originY, 2)) /
+            unitR,
+          2,
+        ),
+        0,
+        1.5,
+      );
+      const theta = Math.atan2(y - originY, x - originX);
+      const rotation = theta * 57.2958;
+      let newHue = round(rotation + 90);
+      if (newHue < 0) newHue += 360;
+      if (newHue > 360) newHue -= 360;
+      updateScale({ hue: newHue, multiplier });
+    },
+    {
+      from: [cx, cy],
+      bounds,
+    },
+  );
   return (
-    <div
-      className="group absolute left-[50%] top-[50%] flex w-1/2 items-center"
-      style={{
-        transformOrigin: "0% 50%",
-        transform: `translateY(-50%) rotate(${rotation}deg)`,
-      }}
-    >
-      <div
-        className="flex-shrink-0 bg-zinc-400 group-hover:bg-zinc-800"
-        style={{ width: `${chromaMultiplier * 50}%`, height: 1 }}
+    <g className="group stroke-zinc-200 hover:stroke-zinc-700">
+      <line
+        strokeWidth={strokeWidth}
+        x1={originX}
+        y1={originY}
+        x2={cx}
+        y2={cy}
       />
-      <div
-        className="size-8 flex-shrink-0 rounded-full border border-zinc-400 group-hover:border-zinc-800"
-        style={{
-          background: fnHueToCSSLCHString(hue, chromaMultiplier),
-        }}
+      <circle
+        className="cursor-pointer"
+        {...bind()}
+        cx={cx}
+        cy={cy}
+        r={CONST_HANDLE_R}
+        fill={fnHueToCSSLCHString(hue, chromaMultiplier)}
+        strokeWidth={strokeWidth}
       />
-      <span
-        className="pointer-events-none invisible ml-1 group-hover:visible"
-        style={{ transform: `rotate(${-rotation}deg)` }}
-      >
-        {name}
-      </span>
-    </div>
+    </g>
   );
 };
