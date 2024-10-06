@@ -19,7 +19,7 @@ export const CurveVisualizer = ({
           multiplier *
           bellShapeCurve(mean, 0.001 * Math.pow(1000, variance), v),
       ),
-    [count, mean, multiplier, variance],
+    [count, mean, multiplier, variance, levels],
   );
   return (
     <ol className={className}>

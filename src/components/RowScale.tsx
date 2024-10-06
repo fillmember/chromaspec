@@ -82,7 +82,7 @@ export function RowScale(props: IRowScale) {
           <button
             className="btn btn-sm"
             onClick={() => {
-              navigator.clipboard.writeText(exportScalesAsSVG([scale]));
+              navigator.clipboard.writeText(exportScalesAsSVG([scale], levels));
             }}
           >
             <LuShare /> Copy SVG

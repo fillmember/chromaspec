@@ -1,6 +1,10 @@
 "use client";
 
-import { allColors, ScaleDataWithComputedData } from "@/atoms/userdata";
+import {
+  allColors,
+  atomLevels,
+  ScaleDataWithComputedData,
+} from "@/atoms/userdata";
 import {
   Listbox,
   ListboxButton,
@@ -25,6 +29,7 @@ interface Combination {
 }
 
 const getCombosWithContrastRatioOrMore = (
+  levels: number[],
   bgScale: ScaleDataWithComputedData,
   fgScale: ScaleDataWithComputedData,
   minContrast: number,
@@ -37,9 +42,9 @@ const getCombosWithContrastRatioOrMore = (
       if (contrast >= minContrast && contrast < maxContrast) {
         result.push({
           bg,
-          bgLevel: bgScale.levels[bgIndex],
+          bgLevel: levels[bgIndex],
           fg,
-          fgLevel: fgScale.levels[fgIndex],
+          fgLevel: levels[fgIndex],
           contrast,
         });
       }
@@ -161,6 +166,7 @@ const atomSelectedFGScaleName = atomWithStorage<string>(
 );
 
 export default function PageCombinations() {
+  const [levels] = useAtom(atomLevels);
   const [scales] = useAtom(allColors);
   const [bgScaleName, setBGScaleName] = useAtom(atomSelectedBGScaleName);
   const [fgScaleName, setFGScaleName] = useAtom(atomSelectedFGScaleName);
@@ -170,11 +176,11 @@ export default function PageCombinations() {
     const fgScale = scales.find((s) => s.name === fgScaleName);
     if (!bgScale || !fgScale) return {};
     return {
-      "7": getCombosWithContrastRatioOrMore(bgScale, fgScale, 7),
-      "4.5": getCombosWithContrastRatioOrMore(bgScale, fgScale, 4.5, 7),
-      "3": getCombosWithContrastRatioOrMore(bgScale, fgScale, 3, 4.5),
+      "7": getCombosWithContrastRatioOrMore(levels, bgScale, fgScale, 7),
+      "4.5": getCombosWithContrastRatioOrMore(levels, bgScale, fgScale, 4.5, 7),
+      "3": getCombosWithContrastRatioOrMore(levels, bgScale, fgScale, 3, 4.5),
     };
-  }, [scales, bgScaleName, fgScaleName]);
+  }, [scales, bgScaleName, fgScaleName, levels]);
   return (
     <section className="my-8 space-y-8">
       <h2 className="flex items-center gap-1 text-2xl font-medium">
