@@ -1,18 +1,20 @@
 import { atom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import { defaultScales } from "./defaultScales";
-import { formatHex, type Oklch } from "culori";
+import { clampChroma, formatHex, type Oklch } from "culori";
+import { bellShapeCurve } from "@/utils/bellShapeCurve";
+import { round } from "lodash";
 
 export interface ScaleData {
   name: string;
   hue: number;
-  chromaMultiplier: number;
-  chromaMaxPerLevel: number[];
+  chroma: {
+    multiplier: number;
+    peak: number;
+    steepness: number;
+  };
 }
 
-export const defaultChromasMaxPerLevel = [
-  0.02, 0.05, 0.09, 0.14, 0.17, 0.19, 0.2, 0.2, 0.17, 0.13, 0.09, 0.06,
-];
 export const defaultLevels = [2, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 95];
 
 export const atomLevels = atomWithStorage("chromaspec-levels", defaultLevels);
@@ -30,18 +32,25 @@ export interface ScaleDataWithComputedData extends ScaleData {
 export const allColors = atom<ScaleDataWithComputedData[]>((get) => {
   const levels = get(atomLevels);
   const userData = get(atomUserData);
-  return userData.map(({ name, hue, chromaMultiplier, chromaMaxPerLevel }) => {
+  return userData.map(({ name, hue, chroma }) => {
+    const { peak, steepness, multiplier } = chroma;
     return {
       name,
       hue,
-      chromaMultiplier,
-      chromaMaxPerLevel,
+      chroma,
       levels,
       colors: levels.map((level, i) => {
         const l = (100 - level) / 100;
-        const c = chromaMaxPerLevel[i] * chromaMultiplier;
+        const c =
+          bellShapeCurve(
+            peak,
+            0.001 * Math.pow(1000, steepness),
+            i / levels.length,
+          ) * multiplier;
         const h = hue;
-        return { mode: "oklch", l, c, h };
+        const color = clampChroma({ mode: "oklch", l, c, h }, "oklch", "p3");
+        color.c = round(color.c, 5);
+        return color;
       }),
     };
   });

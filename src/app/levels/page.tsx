@@ -1,12 +1,18 @@
 "use client";
 
 import { atomLevels, defaultLevels } from "@/atoms/userdata";
+import { deleteItemAtIndex } from "@/utils/arrayManipulation";
 import { Input } from "@headlessui/react";
 import { formatCss } from "culori";
 import { produce } from "immer";
 import { useAtom } from "jotai/react";
 import sortedUniq from "lodash/sortedUniq";
-import { LuListOrdered, LuPlusCircle, LuRefreshCcw } from "react-icons/lu";
+import {
+  LuListOrdered,
+  LuPlusCircle,
+  LuRefreshCcw,
+  LuTrash,
+} from "react-icons/lu";
 
 export default function PageLevels() {
   const [levels, setLevels] = useAtom(atomLevels);
@@ -107,6 +113,14 @@ const Level = (props: { index: number; level: number }) => {
           />
           <span>{luminance}%</span>
         </output>
+      </td>
+      <td>
+        <button
+          className="btn btn-sm"
+          onClick={() => setLevels(deleteItemAtIndex(levels, index))}
+        >
+          <LuTrash /> delete
+        </button>
       </td>
     </tr>
   );

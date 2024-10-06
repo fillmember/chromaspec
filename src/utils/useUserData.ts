@@ -1,27 +1,15 @@
 "use client";
 
-import {
-  atomUserData,
-  defaultChromasMaxPerLevel,
-  ScaleData,
-} from "@/atoms/userdata";
+import { atomUserData, ScaleData } from "@/atoms/userdata";
 import { useAtom } from "jotai/react";
 import { deleteItemAtIndex, setItemAtIndex } from "./arrayManipulation";
 import { useCallback } from "react";
+import { defaultScales } from "@/atoms/defaultScales";
 
 export const useUserData = () => {
   const [scales, setScales] = useAtom(atomUserData);
   const addNewScale = useCallback(
-    () =>
-      setScales([
-        ...scales,
-        {
-          name: "new scale",
-          hue: 0,
-          chromaMultiplier: 1,
-          chromaMaxPerLevel: defaultChromasMaxPerLevel,
-        },
-      ]),
+    () => setScales([...scales, defaultScales[0]]),
     [scales, setScales],
   );
   const updateScale = useCallback(

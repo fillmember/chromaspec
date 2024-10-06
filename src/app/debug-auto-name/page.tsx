@@ -29,12 +29,12 @@ const segments = listAscending.map((color, index, arr) => {
 
   // Path for the segment
   const pathData = `
-          M ${x1Outer},${y1Outer}
-          A ${radiusOuter},${radiusOuter} 0 ${largeArcFlag},1 ${x2Outer},${y2Outer}
-          L ${x2Inner},${y2Inner}
-          A ${radiusInner},${radiusInner} 0 ${largeArcFlag},0 ${x1Inner},${y1Inner}
-          Z
-        `;
+    M ${x1Outer},${y1Outer}
+    A ${radiusOuter},${radiusOuter} 0 ${largeArcFlag},1 ${x2Outer},${y2Outer}
+    L ${x2Inner},${y2Inner}
+    A ${radiusInner},${radiusInner} 0 ${largeArcFlag},0 ${x1Inner},${y1Inner}
+    Z
+  `;
 
   // Calculate text position
   const angleText = (rangeMin + color.rangeMax) / 2;

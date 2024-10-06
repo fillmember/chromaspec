@@ -8,7 +8,6 @@ import {
   ScaleDataWithComputedData,
   ScaleData,
   atomLevels,
-  defaultChromasMaxPerLevel,
   exportScalesAsSVG,
 } from "@/atoms/userdata";
 import { useGridSettings } from "@/utils/useGridSettings";
@@ -16,10 +15,6 @@ import {
   Field,
   Label,
   Input,
-  Listbox,
-  ListboxButton,
-  ListboxOptions,
-  ListboxOption,
   Popover,
   PopoverButton,
   PopoverPanel,
@@ -27,11 +22,21 @@ import {
 import clsx from "clsx";
 import { useAtom } from "jotai";
 import { padStart, round } from "lodash";
-import { LuCheck, LuShare, LuSparkles, LuTrash } from "react-icons/lu";
+import { LuCheck, LuCopy, LuShare, LuSparkles, LuTrash } from "react-icons/lu";
 import { DtDd } from "./DtDd";
 import { RowWithLevelGrid } from "./RowWithLevelGrid";
 import { autoName } from "@/utils/autoName";
-import { formatCss, formatHex, wcagLuminance } from "culori";
+import {
+  filterContrast,
+  filterInvert,
+  formatCss,
+  formatHex,
+  Oklch,
+  oklch,
+  wcagLuminance,
+} from "culori";
+import { Slider } from "./Slider";
+import { CurveVisualizer } from "./CurveVisualizer";
 
 const clsHeaderField =
   "flex items-center gap-2 rounded-lg bg-black/5 px-2 py-1.5 text-sm";
@@ -50,7 +55,7 @@ export interface IRowScale {
 
 export function RowScale(props: IRowScale) {
   const { scale, updateScale, deleteScale } = props;
-  const { colors, chromaMaxPerLevel } = scale;
+  const { colors, chroma } = scale;
   const [levels] = useAtom(atomLevels);
   const [dataPointVisibility] = useAtom(atomDataPointVisibility);
   const { containerStyle } = useGridSettings();
@@ -59,53 +64,61 @@ export function RowScale(props: IRowScale) {
       <header className="space-y-1">
         <FieldName {...props} />
         <FieldHue {...props} />
-        <FieldChromaMultiplier {...props} />
         <Popover>
           <PopoverButton className={clsx(clsHeaderField, "w-full")}>
-            Max Saturation Per Step...
+            Chroma Settings
           </PopoverButton>
           <PopoverPanel
             anchor="bottom start"
             transition
-            className="w-96 space-y-1 rounded-lg border bg-white p-3 text-sm shadow-lg transition duration-150 data-[closed]:scale-90 data-[closed]:opacity-0"
+            className="grid w-96 grid-cols-7 gap-1 space-y-1 rounded-lg border bg-white p-3 text-sm shadow-lg transition duration-150 data-[closed]:scale-90 data-[closed]:opacity-0"
           >
-            <div className="grid" style={containerStyle}>
-              {levels.map((lvl, index) => {
-                const value = chromaMaxPerLevel[index] ?? 0;
-                return (
-                  <Field
-                    key={index}
-                    className="flex flex-col items-center justify-between text-sm"
-                  >
-                    <Label className="text-zinc-700">{levels[index]}</Label>
-                    <Input
-                      type="range"
-                      className="slider-vertical"
-                      min={0}
-                      max={0.4}
-                      step={0.01}
-                      value={value}
-                      onChange={(evt) => {
-                        const newArray = chromaMaxPerLevel.map((x) => x);
-                        newArray[index] = parseFloat(evt.target.value);
-                        updateScale({ chromaMaxPerLevel: newArray });
-                      }}
-                    />
-                    <output className="font-mono">
-                      {round(value * 100, 0)}
-                    </output>
-                  </Field>
-                );
-              })}
-            </div>
-            <button
-              className="w-full rounded-md border p-1 px-2"
-              onClick={() => {
-                updateScale({ chromaMaxPerLevel: defaultChromasMaxPerLevel });
-              }}
-            >
-              reset to default
-            </button>
+            <CurveVisualizer
+              className="col-span-full flex h-24 items-end"
+              {...chroma}
+            />
+            <Slider
+              label="Peak"
+              min={0}
+              max={1}
+              step={0.01}
+              value={chroma.peak}
+              setValue={(newValue) =>
+                updateScale({ chroma: { ...chroma, peak: newValue } })
+              }
+              clsLabel="col-span-2"
+              clsField="contents"
+              clsInput="col-span-4"
+              clsOutput="text-right"
+            />
+            <Slider
+              label="Curvature"
+              min={0}
+              max={1}
+              step={0.01}
+              value={chroma.steepness}
+              setValue={(newValue) =>
+                updateScale({ chroma: { ...chroma, steepness: newValue } })
+              }
+              clsLabel="col-span-2"
+              clsField="contents"
+              clsInput="col-span-4"
+              clsOutput="text-right"
+            />
+            <Slider
+              label="Multiplier"
+              min={0}
+              max={1.5}
+              step={0.05}
+              value={chroma.multiplier}
+              setValue={(newValue) =>
+                updateScale({ chroma: { ...chroma, multiplier: newValue } })
+              }
+              clsLabel="col-span-2"
+              clsField="contents"
+              clsInput="col-span-4"
+              clsOutput="text-right"
+            />
           </PopoverPanel>
         </Popover>
 
@@ -147,12 +160,39 @@ export function RowScale(props: IRowScale) {
           const hex = formatHex(color);
           const cssOKLCH = formatCss(color);
           const relativeLuminance = round(wcagLuminance(color), 2);
+          const onSurface: Oklch = {
+            mode: "oklch",
+            l: color.l > 0.5 ? 0 : 1,
+            c: 0,
+          };
           return (
             <li className="flex flex-col space-y-1 text-sm" key={level}>
-              <div
-                className="min-h-9 w-full flex-grow touch-none rounded border"
-                style={{ background: cssOKLCH }}
-              />
+              <div>
+                <button
+                  className="group flex min-h-9 w-full flex-grow touch-none items-center justify-center rounded-t border border-b-0 text-xs"
+                  style={{
+                    background: cssOKLCH,
+                    color: formatCss(onSurface),
+                  }}
+                  onClick={() => navigator.clipboard.writeText(cssOKLCH)}
+                >
+                  <span className="flex gap-1 opacity-0 group-hover:opacity-100">
+                    <LuCopy /> OKLCH
+                  </span>
+                </button>
+                <button
+                  className="group flex min-h-9 w-full flex-grow touch-none items-center justify-center rounded-b border border-t-0 text-xs"
+                  style={{
+                    background: hex,
+                    color: formatHex(onSurface),
+                  }}
+                  onClick={() => navigator.clipboard.writeText(hex)}
+                >
+                  <span className="flex gap-1 opacity-0 group-hover:opacity-100">
+                    <LuCopy /> HEX
+                  </span>
+                </button>
+              </div>
               {dataPointVisibility.length > 0 && (
                 <dl
                   className={clsx(
@@ -236,7 +276,11 @@ export function FieldHue(props: IRowScaleField) {
 
 export function FieldName(props: IRowScaleField) {
   const {
-    scale: { name, hue, chromaMultiplier },
+    scale: {
+      name,
+      hue,
+      chroma: { multiplier: chromaMultiplier },
+    },
     updateScale,
   } = props;
   return (
@@ -247,74 +291,6 @@ export function FieldName(props: IRowScaleField) {
         value={name}
         onChange={(evt) => updateScale({ name: evt.target.value })}
       />
-      <button
-        className="size-6 hover:text-purple-600"
-        onClick={() => updateScale({ name: autoName(hue, chromaMultiplier) })}
-      >
-        <LuSparkles />
-      </button>
-    </Field>
-  );
-}
-
-export function FieldChromaMultiplier(props: IRowScaleField) {
-  const {
-    scale: { chromaMultiplier },
-    updateScale,
-  } = props;
-  return (
-    <Field className={clsHeaderField}>
-      <Label>
-        Sat<sup>x</sup>
-      </Label>
-      <Input
-        type="range"
-        className="w-full"
-        value={chromaMultiplier}
-        onChange={(evt) => {
-          const newValue = parseFloat(evt.target.value);
-          updateScale({ chromaMultiplier: newValue });
-        }}
-        min={0}
-        max={2.5}
-        step={0.01}
-      />
-      <Listbox
-        value={chromaMultiplier}
-        onChange={(newValue) => {
-          updateScale({ chromaMultiplier: newValue });
-        }}
-      >
-        <ListboxButton
-          className={clsx(
-            "relative block text-left font-mono text-sm/6 text-black",
-            "focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-black/25",
-          )}
-        >
-          {padStart(round(chromaMultiplier * 100, 1).toString(), 3, "0")}%
-        </ListboxButton>
-        <ListboxOptions
-          transition
-          className={clsx(
-            "rounded-xl border border-black/5 bg-white p-1 [--anchor-gap:var(--spacing-1)] focus:outline-none",
-            "transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0",
-          )}
-          anchor="bottom"
-        >
-          {[0.01, 0.05, 0.5, 1, 1.5, 2].map((value) => {
-            return (
-              <ListboxOption
-                key={value}
-                value={value}
-                className="group flex cursor-default select-none items-center gap-2 rounded-lg px-3 py-1.5 data-[focus]:bg-black/10"
-              >
-                <LuCheck className="invisible size-4 text-black group-data-[selected]:visible" />
-                <div className="text-sm/6 text-black">{value * 100}%</div>
-              </ListboxOption>
-            );
-          })}
-        </ListboxOptions>
-      </Listbox>
     </Field>
   );
 }
