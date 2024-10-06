@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/SiteHeader";
+import { EffectorLoadDataFromURL } from "@/components/EffectorLoadDataFromURL";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,6 +22,7 @@ export default function RootLayout({
         <main className="mx-auto max-w-[2048px] p-8 pt-4">
           <SiteHeader />
           {children}
+          <EffectorLoadDataFromURL />
         </main>
       </body>
     </html>

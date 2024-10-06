@@ -1,12 +1,12 @@
 "use client";
 
-import { allColors, ScaleData } from "@/atoms/userdata";
+import { ScaleData } from "@/atoms/userdata";
+import { MiniColorScales } from "@/components/MiniColorScales";
 import { FieldName } from "@/components/RowScale";
 import { Slider } from "@/components/Slider";
 import { useUserData } from "@/utils/useUserData";
 import { DragConfig, useDrag } from "@use-gesture/react";
 import { clampChroma, formatCss } from "culori";
-import { useAtom } from "jotai";
 import { clamp, round } from "lodash";
 import { useMemo } from "react";
 import { useMeasure } from "react-use";
@@ -216,27 +216,5 @@ const ColorScale = (
         strokeWidth={strokeWidth}
       />
     </g>
-  );
-};
-
-const MiniColorScales = () => {
-  const [scales] = useAtom(allColors);
-  return (
-    <dl className="grid grid-cols-12 items-center text-sm text-zinc-600">
-      {scales.map(({ name, colors }, index) => (
-        <div className="contents" key={index}>
-          <dt>{name}</dt>
-          <dd className="col-span-11 flex">
-            {colors.map((color, index) => (
-              <div
-                key={index}
-                style={{ backgroundColor: formatCss(color) }}
-                className="h-8 w-full"
-              />
-            ))}
-          </dd>
-        </div>
-      ))}
-    </dl>
   );
 };
