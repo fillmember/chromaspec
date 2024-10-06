@@ -8,8 +8,8 @@ import { LuCopy } from "react-icons/lu";
 
 export const SharableLink = () => {
   const [shareLink, setShareLink] = useState<string>("");
-  const scales = useAtom(atomUserData);
-  const levels = useAtom(atomLevels);
+  const [scales] = useAtom(atomUserData);
+  const [levels] = useAtom(atomLevels);
   useEffect(() => {
     setShareLink(
       `${window.location.origin}?d=${btoa(JSON.stringify({ scales, levels }))}`,
