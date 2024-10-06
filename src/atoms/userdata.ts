@@ -126,13 +126,6 @@ export const atomCSSVariables = atom<string>((get) => {
     .join("\n");
 });
 
-export const sharableLinkQueryString = atom<string>((get) => {
-  const scales = get(atomUserData);
-  const levels = get(atomLevels);
-  const str = `${window.location.origin}?d=${btoa(JSON.stringify({ scales, levels }))}`;
-  return str;
-});
-
 //
 
 export const exportScalesAsSVG = (

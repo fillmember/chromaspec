@@ -5,20 +5,10 @@ import {
   atomSVGAllScales,
   atomJSONDesignTokens,
   atomCSSVariables,
-  sharableLinkQueryString,
 } from "@/atoms/userdata";
 import { MiniColorScales } from "@/components/MiniColorScales";
-import {
-  Button,
-  Field,
-  Input,
-  Label,
-  Tab,
-  TabGroup,
-  TabList,
-  TabPanel,
-  TabPanels,
-} from "@headlessui/react";
+import { SharableLink } from "@/components/SharableLink";
+import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 import { useAtom } from "jotai";
 import { ReactNode } from "react";
 import { LuCopy } from "react-icons/lu";
@@ -31,29 +21,11 @@ export default function PageInfo() {
   const [tailwindConfig] = useAtom(atomTailwindConfig);
   const [jsonDesignToken] = useAtom(atomJSONDesignTokens);
   const [cssVariables] = useAtom(atomCSSVariables);
-  const [shareLink] = useAtom(sharableLinkQueryString);
   return (
     <div className="mt-8">
       <header className="my-4 flex justify-between">
         <h2 className="text-2xl font-bold">Import / Export</h2>
-        <Field className="flex items-center gap-2 text-sm">
-          <Label className="font-medium">Sharable Link</Label>
-          <Input
-            type="text"
-            value={shareLink}
-            readOnly
-            onClick={(evt) => evt.currentTarget.select()}
-            className="border-b border-zinc-700 p-1"
-          />
-          <Button
-            className="btn btn-sm"
-            onClick={() => {
-              window.navigator.clipboard.writeText(shareLink);
-            }}
-          >
-            <LuCopy /> Copy
-          </Button>
-        </Field>
+        <SharableLink />
       </header>
       <figure className="my-4 border p-4">
         <MiniColorScales />

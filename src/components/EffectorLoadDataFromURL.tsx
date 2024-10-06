@@ -18,8 +18,9 @@ export const EffectorLoadDataFromURL = () => {
       setLevels(levels);
     } catch (error) {
       // do nothing...
+      console.error(error);
     }
     window.location.search = "";
-  }, []);
+  }, [setUserData, setLevels]);
   return null;
 };
