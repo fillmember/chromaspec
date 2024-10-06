@@ -1,21 +1,21 @@
 "use client";
 
-import { ScaleData } from "@/atoms/userdata";
+import { allColors, ScaleData } from "@/atoms/userdata";
 import { FieldName } from "@/components/RowScale";
 import { Slider } from "@/components/Slider";
 import { useUserData } from "@/utils/useUserData";
-import { DragConfig, GestureOptions, useDrag } from "@use-gesture/react";
+import { DragConfig, useDrag } from "@use-gesture/react";
 import { clampChroma, formatCss } from "culori";
+import { useAtom } from "jotai";
 import { clamp, round } from "lodash";
 import { useMemo } from "react";
 import { useMeasure } from "react-use";
-import { UseMeasureResult } from "react-use/lib/useMeasure";
 
 const hues = [0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330, 360];
 const fnHueToCSSLCHString = (hue: number, saturation = 1) =>
   formatCss(
     clampChroma(
-      { mode: "oklch", c: 0.4 * saturation, l: 0.66, h: hue },
+      { mode: "oklch", c: 0.7 * saturation, l: 0.66, h: hue },
       "oklch",
     ),
   );
@@ -30,7 +30,10 @@ export default function PageInfo() {
   const { scales, updateScale, deleteScale } = useUserData();
   return (
     <div className="m-8 grid gap-8 md:grid-cols-2">
-      <Wheel />
+      <div className="space-y-8">
+        <ColorWheel />
+        <MiniColorScales />
+      </div>
       <ol className="grid gap-4">
         {scales.map((scale, index) => {
           const props = {
@@ -41,7 +44,7 @@ export default function PageInfo() {
           };
           return (
             <li
-              className="grid grid-cols-7 gap-2 rounded-xl border p-2"
+              className="grid grid-cols-7 gap-2 rounded-xl border px-4 py-2"
               key={index}
             >
               <FieldName
@@ -88,7 +91,7 @@ export default function PageInfo() {
 
 const CONST_HANDLE_R = 20;
 
-const Wheel = () => {
+const ColorWheel = () => {
   const { scales, updateScale } = useUserData();
   const [ref, size] = useMeasure<SVGSVGElement>();
   const bag = useMemo(() => {
@@ -213,5 +216,27 @@ const ColorScale = (
         strokeWidth={strokeWidth}
       />
     </g>
+  );
+};
+
+const MiniColorScales = () => {
+  const [scales] = useAtom(allColors);
+  return (
+    <dl className="grid grid-cols-12 items-center text-sm text-zinc-600">
+      {scales.map(({ name, colors }, index) => (
+        <div className="contents" key={index}>
+          <dt>{name}</dt>
+          <dd className="col-span-11 flex">
+            {colors.map((color, index) => (
+              <div
+                key={index}
+                style={{ backgroundColor: formatCss(color) }}
+                className="h-8 w-full"
+              />
+            ))}
+          </dd>
+        </div>
+      ))}
+    </dl>
   );
 };
