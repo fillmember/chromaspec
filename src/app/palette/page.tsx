@@ -1,17 +1,19 @@
 "use client";
 
 import { ScaleData } from "@/atoms/userdata";
-import {
-  FieldChromaMultiplier,
-  FieldHue,
-  FieldName,
-} from "@/components/RowScale";
+import { FieldName } from "@/components/RowScale";
+import { Slider } from "@/components/Slider";
 import { useUserData } from "@/utils/useUserData";
-import { clamp, round } from "lodash";
+import { clampChroma, formatCss } from "culori";
 
 const hues = [0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330, 360];
 const fnHueToCSSLCHString = (hue: number, saturation = 1) =>
-  `lch(75% ${round(clamp(saturation * 100, 0, 100))}% ${hue}deg)`;
+  formatCss(
+    clampChroma(
+      { mode: "oklch", c: 0.4 * saturation, l: 0.66, h: hue },
+      "oklch",
+    ),
+  );
 
 const styleLCHGradient = {
   background: `conic-gradient(${hues
@@ -42,10 +44,44 @@ export default function PageInfo() {
             deleteScale: () => deleteScale(index),
           };
           return (
-            <li className="grid gap-1" key={index}>
-              <FieldName key={index} {...props} />
-              <FieldHue key={index} {...props} />
-              <FieldChromaMultiplier key={index} {...props} />
+            <li
+              className="grid grid-cols-7 gap-2 rounded-xl border p-2"
+              key={index}
+            >
+              <FieldName
+                className="col-span-full flex items-baseline gap-4 text-lg"
+                {...props}
+              />
+              <Slider
+                clsField="contents"
+                clsInput="col-span-5"
+                clsOutput="text-right"
+                label="Hue"
+                value={props.scale.hue}
+                setValue={(newValue) => props.updateScale({ hue: newValue })}
+                min={0}
+                max={360}
+                step={1}
+              />
+              <Slider
+                clsField="contents"
+                clsInput="col-span-5"
+                clsOutput="text-right"
+                label={
+                  <span>
+                    x<sup>chroma</sup>
+                  </span>
+                }
+                min={0}
+                max={1.5}
+                step={0.05}
+                value={props.scale.chroma.multiplier}
+                setValue={(multiplier) =>
+                  props.updateScale({
+                    chroma: { ...props.scale.chroma, multiplier },
+                  })
+                }
+              />
             </li>
           );
         })}
@@ -55,7 +91,11 @@ export default function PageInfo() {
 }
 
 const ColorScale = (props: ScaleData & { index: number }) => {
-  const { hue, name, chromaMultiplier } = props;
+  const {
+    hue,
+    name,
+    chroma: { multiplier: chromaMultiplier },
+  } = props;
   const rotation = hue - 90;
   return (
     <div

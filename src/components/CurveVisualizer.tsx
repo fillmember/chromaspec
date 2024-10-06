@@ -12,24 +12,18 @@ export const CurveVisualizer = ({
 }: ScaleData["chroma"] & { className?: string }) => {
   const [levels] = useAtom(atomLevels);
   const count = levels.length;
-  const arr = useMemo(
+  const values = useMemo(
     () =>
-      new Array(count)
-        .fill(0)
-        .map(
-          (v, index) =>
-            multiplier *
-            bellShapeCurve(
-              mean,
-              0.001 * Math.pow(1000, variance),
-              index / count,
-            ),
-        ),
+      Array.from(levels, (_, index) => index / count).map(
+        (v) =>
+          multiplier *
+          bellShapeCurve(mean, 0.001 * Math.pow(1000, variance), v),
+      ),
     [count, mean, multiplier, variance],
   );
   return (
     <ol className={className}>
-      {arr.map((c, index) => (
+      {values.map((c, index) => (
         <li
           key={index}
           style={{

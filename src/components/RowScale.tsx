@@ -10,7 +10,6 @@ import {
   atomLevels,
   exportScalesAsSVG,
 } from "@/atoms/userdata";
-import { useGridSettings } from "@/utils/useGridSettings";
 import {
   Field,
   Label,
@@ -18,23 +17,15 @@ import {
   Popover,
   PopoverButton,
   PopoverPanel,
+  Fieldset,
 } from "@headlessui/react";
 import clsx from "clsx";
 import { useAtom } from "jotai";
-import { padStart, round } from "lodash";
-import { LuCheck, LuCopy, LuShare, LuSparkles, LuTrash } from "react-icons/lu";
+import { round } from "lodash";
+import { LuCopy, LuShare, LuTrash } from "react-icons/lu";
 import { DtDd } from "./DtDd";
 import { RowWithLevelGrid } from "./RowWithLevelGrid";
-import { autoName } from "@/utils/autoName";
-import {
-  filterContrast,
-  filterInvert,
-  formatCss,
-  formatHex,
-  Oklch,
-  oklch,
-  wcagLuminance,
-} from "culori";
+import { formatCss, formatHex, Oklch, wcagLuminance } from "culori";
 import { Slider } from "./Slider";
 import { CurveVisualizer } from "./CurveVisualizer";
 
@@ -55,15 +46,25 @@ export interface IRowScale {
 
 export function RowScale(props: IRowScale) {
   const { scale, updateScale, deleteScale } = props;
-  const { colors, chroma } = scale;
+  const { colors } = scale;
   const [levels] = useAtom(atomLevels);
   const [dataPointVisibility] = useAtom(atomDataPointVisibility);
-  const { containerStyle } = useGridSettings();
   return (
     <RowWithLevelGrid>
       <header className="space-y-1">
-        <FieldName {...props} />
-        <FieldHue {...props} />
+        <FieldName className={clsHeaderField} {...props} />
+        <Slider
+          label="Hue"
+          value={props.scale.hue}
+          setValue={(newValue) => updateScale({ hue: newValue })}
+          min={0}
+          max={360}
+          step={1}
+          clsField={clsHeaderField}
+          clsInput="w-full"
+          clsLabel="w-10"
+          clsOutput="font-mono w-10 text-right"
+        />
         <Popover>
           <PopoverButton className={clsx(clsHeaderField, "w-full")}>
             Chroma Settings
@@ -71,54 +72,9 @@ export function RowScale(props: IRowScale) {
           <PopoverPanel
             anchor="bottom start"
             transition
-            className="grid w-96 grid-cols-7 gap-1 space-y-1 rounded-lg border bg-white p-3 text-sm shadow-lg transition duration-150 data-[closed]:scale-90 data-[closed]:opacity-0"
+            className="rounded-lg border bg-white p-3 shadow-lg transition duration-150 data-[closed]:scale-90 data-[closed]:opacity-0"
           >
-            <CurveVisualizer
-              className="col-span-full flex h-24 items-end"
-              {...chroma}
-            />
-            <Slider
-              label="Peak"
-              min={0}
-              max={1}
-              step={0.01}
-              value={chroma.peak}
-              setValue={(newValue) =>
-                updateScale({ chroma: { ...chroma, peak: newValue } })
-              }
-              clsLabel="col-span-2"
-              clsField="contents"
-              clsInput="col-span-4"
-              clsOutput="text-right"
-            />
-            <Slider
-              label="Curvature"
-              min={0}
-              max={1}
-              step={0.01}
-              value={chroma.steepness}
-              setValue={(newValue) =>
-                updateScale({ chroma: { ...chroma, steepness: newValue } })
-              }
-              clsLabel="col-span-2"
-              clsField="contents"
-              clsInput="col-span-4"
-              clsOutput="text-right"
-            />
-            <Slider
-              label="Multiplier"
-              min={0}
-              max={1.5}
-              step={0.05}
-              value={chroma.multiplier}
-              setValue={(newValue) =>
-                updateScale({ chroma: { ...chroma, multiplier: newValue } })
-              }
-              clsLabel="col-span-2"
-              clsField="contents"
-              clsInput="col-span-4"
-              clsOutput="text-right"
-            />
+            <ChromaCurveEditor {...props} />
           </PopoverPanel>
         </Popover>
 
@@ -249,42 +205,13 @@ export function RowScale(props: IRowScale) {
   );
 }
 
-export function FieldHue(props: IRowScaleField) {
+export function FieldName(props: IRowScaleField & { className?: string }) {
   const {
-    scale: { hue },
+    scale: { name },
     updateScale,
   } = props;
   return (
-    <Field className={clsHeaderField}>
-      <Label>Hue</Label>
-      <Input
-        type="range"
-        className="w-full"
-        value={hue}
-        onChange={(evt) => {
-          const newValue = parseFloat(evt.target.value);
-          updateScale({ hue: newValue });
-        }}
-        min={0}
-        max={360}
-        step={1}
-      />
-      <span className="font-mono">{padStart(hue.toFixed(0), 3, "0")}</span>
-    </Field>
-  );
-}
-
-export function FieldName(props: IRowScaleField) {
-  const {
-    scale: {
-      name,
-      hue,
-      chroma: { multiplier: chromaMultiplier },
-    },
-    updateScale,
-  } = props;
-  return (
-    <Field className={clsHeaderField}>
+    <Field className={props.className}>
       <Label>Name</Label>
       <Input
         className="py-.5 w-full border-b border-zinc-300 bg-transparent px-1"
@@ -292,5 +219,62 @@ export function FieldName(props: IRowScaleField) {
         onChange={(evt) => updateScale({ name: evt.target.value })}
       />
     </Field>
+  );
+}
+
+export function ChromaCurveEditor(props: IRowScaleField) {
+  const {
+    scale: { chroma },
+    updateScale,
+  } = props;
+  return (
+    <Fieldset className="grid grid-cols-7 gap-1 text-sm">
+      <CurveVisualizer
+        className="col-span-full flex h-24 items-end"
+        {...chroma}
+      />
+      <Slider
+        label="Peak"
+        min={0}
+        max={1}
+        step={0.01}
+        value={chroma.peak}
+        setValue={(newValue) =>
+          updateScale({ chroma: { ...chroma, peak: newValue } })
+        }
+        clsLabel="col-span-2"
+        clsField="contents"
+        clsInput="col-span-4"
+        clsOutput="text-right"
+      />
+      <Slider
+        label="Curvature"
+        min={0}
+        max={1}
+        step={0.01}
+        value={chroma.steepness}
+        setValue={(newValue) =>
+          updateScale({ chroma: { ...chroma, steepness: newValue } })
+        }
+        clsLabel="col-span-2"
+        clsField="contents"
+        clsInput="col-span-4"
+        clsOutput="text-right"
+      />
+      <Slider
+        label="Multiplier"
+        min={0}
+        max={1.5}
+        step={0.05}
+        value={chroma.multiplier}
+        setValue={(newValue) =>
+          updateScale({ chroma: { ...chroma, multiplier: newValue } })
+        }
+        clsLabel="col-span-2"
+        clsField="contents"
+        clsInput="col-span-4"
+        clsOutput="text-right"
+      />
+    </Fieldset>
   );
 }

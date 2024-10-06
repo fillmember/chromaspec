@@ -14,22 +14,17 @@ export default function PageDebugGaussian() {
   const [variance, setVariance] = useState<number>(0.64);
   const [count, setCount] = useState<number>(12);
   const [multiplier, setMultiplier] = useState<number>(1);
+  const [levels] = useAtom(atomLevels);
   const arr = useMemo(
     () =>
-      new Array(count)
-        .fill(0)
-        .map(
-          (v, index) =>
-            multiplier *
-            bellShapeCurve(
-              mean,
-              0.001 * Math.pow(1000, variance),
-              index / count,
-            ),
-        ),
+      Array.from(levels, (_, index) => index / count).map(
+        (v) =>
+          multiplier *
+          bellShapeCurve(mean, 0.001 * Math.pow(1000, variance), v),
+      ),
     [count, mean, multiplier, variance],
   );
-  const [levels] = useAtom(atomLevels);
+
   return (
     <div className="grid grid-cols-2 gap-2">
       <Slider
