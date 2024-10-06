@@ -1,9 +1,11 @@
 import { atom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
+import * as jsoncrush from "jsoncrush";
 import { defaultScales } from "./defaultScales";
 import { clampChroma, formatCss, formatHex, type Oklch } from "culori";
 import { bellShapeCurve } from "@/utils/bellShapeCurve";
 import { keyBy, mapValues, round, zipObject } from "lodash";
+import * as urlStorage from "@/utils/searchStringStorage";
 
 export interface ScaleData {
   name: string;
@@ -17,12 +19,38 @@ export interface ScaleData {
 
 export const defaultLevels = [2, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 95];
 
-export const atomLevels = atomWithStorage("chromaspec-levels", defaultLevels);
+const arrEncoder = (x: number[]) => x.join("_");
+const arrDecoder = (x: string) => x.split("_").map((x) => parseInt(x));
+const objEncoder = (x: object) =>
+  encodeURIComponent(jsoncrush.default.crush(JSON.stringify(x)));
+const objDecoder = (x: string) =>
+  JSON.parse(jsoncrush.default.uncrush(decodeURIComponent(x)));
 
-export const atomUserData = atomWithStorage<ScaleData[]>(
-  "chromaspec-scales-2",
-  defaultScales,
-);
+export const atomLevels = atomWithStorage("l", defaultLevels, {
+  getItem(key, initialValue) {
+    return urlStorage.getItem<number[]>(key, initialValue, {
+      encode: arrEncoder,
+      decode: arrDecoder,
+    });
+  },
+  setItem(key, value) {
+    urlStorage.setItem(key, arrEncoder(value));
+  },
+  removeItem: urlStorage.remove,
+});
+
+export const atomUserData = atomWithStorage<ScaleData[]>("s", defaultScales, {
+  getItem(key, initialValue) {
+    return urlStorage.getItem<ScaleData[]>(key, initialValue, {
+      encode: objEncoder,
+      decode: objDecoder,
+    });
+  },
+  setItem(key, value) {
+    urlStorage.setItem(key, objEncoder(value));
+  },
+  removeItem: urlStorage.remove,
+});
 
 export interface ScaleDataWithComputedData extends ScaleData {
   colors: Oklch[];

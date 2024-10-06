@@ -19,6 +19,7 @@
     "immer": "^10.1.1",
     "jotai": "^2.9.3",
     "jotai-immer": "^0.4.1",
+    "jsoncrush": "^1.1.8",
     "lint-staged": "^15.2.10",
     "lodash": "^4.17.21",
     "next": "14.2.5",

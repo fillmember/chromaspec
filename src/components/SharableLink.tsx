@@ -1,20 +1,16 @@
 "use client";
 
-import { atomLevels, atomUserData } from "@/atoms/userdata";
 import { Field, Label, Input, Button } from "@headlessui/react";
-import { useAtom } from "jotai";
 import { useEffect, useState } from "react";
 import { LuCopy } from "react-icons/lu";
+import { useSearchParams } from "next/navigation";
 
 export const SharableLink = () => {
+  const searchParams = useSearchParams();
   const [shareLink, setShareLink] = useState<string>("");
-  const [scales] = useAtom(atomUserData);
-  const [levels] = useAtom(atomLevels);
   useEffect(() => {
-    setShareLink(
-      `${window.location.origin}?d=${btoa(JSON.stringify({ scales, levels }))}`,
-    );
-  }, [scales, levels]);
+    setShareLink(`${window.location.origin}?${searchParams.toString()}`);
+  }, [searchParams]);
   return (
     <Field className="flex items-center gap-2 text-sm">
       <Label className="font-medium">Sharable Link</Label>

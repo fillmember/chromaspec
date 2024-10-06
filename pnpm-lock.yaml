@@ -29,6 +29,9 @@ importers:
       jotai-immer:
         specifier: ^0.4.1
         version: 0.4.1(immer@10.1.1)(jotai@2.9.3(@types/react@18.3.3)(react@18.3.1))
+      jsoncrush:
+        specifier: ^1.1.8
+        version: 1.1.8
       lint-staged:
         specifier: ^15.2.10
         version: 15.2.10
@@ -1255,6 +1258,9 @@ packages:
   json5@1.0.2:
     resolution: {integrity: sha512-g1MWMLBiz8FKi1e4w0UyVL3w+iJceWAFBAaBnnGKOpNa5f8TLktkbre1+s6oICydWAm+HRUGTmI+//xv2hvXYA==}
     hasBin: true
+
+  jsoncrush@1.1.8:
+    resolution: {integrity: sha512-lvIMGzMUA0fjuqwNcxlTNRq2bibPZ9auqT/LyGdlR5hvydJtA/BasSgkx4qclqTKVeTidrJvsS/oVjlTCPQ4Nw==}
 
   jsx-ast-utils@3.3.5:
     resolution: {integrity: sha512-ZZow9HBI5O6EPgSJLUb8n2NKgmVWTwCvHGwFuJlMjvLFqlGG6pjirPhtdsseaLZjSibD8eegzmYpUZwoIlj2cQ==}
@@ -3401,6 +3407,8 @@ snapshots:
   json5@1.0.2:
     dependencies:
       minimist: 1.2.8
+
+  jsoncrush@1.1.8: {}
 
   jsx-ast-utils@3.3.5:
     dependencies:
