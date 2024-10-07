@@ -1,0 +1,20 @@
+.row {
+  grid-template-areas:
+    "levels"
+    "header";
+}
+
+@media screen(md) {
+  .row {
+    grid-template-areas: "header levels";
+    grid-template-columns: 15rem 1fr;
+  }
+}
+
+.header {
+  grid-area: header;
+}
+
+.levels {
+  grid-area: levels;
+}

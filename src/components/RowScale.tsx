@@ -24,13 +24,13 @@ import { useAtom } from "jotai";
 import { round } from "lodash";
 import { LuCopy, LuShare, LuTrash } from "react-icons/lu";
 import { DtDd } from "./DtDd";
-import { RowWithLevelGrid } from "./RowWithLevelGrid";
 import { formatCss, formatHex, Oklch, wcagLuminance } from "culori";
 import { Slider } from "./Slider";
 import { CurveVisualizer } from "./CurveVisualizer";
+import styles from "./RowScale.module.css";
 
 const clsHeaderField =
-  "flex items-center gap-2 rounded-lg bg-black/5 px-2 py-1.5 text-sm";
+  "flex items-center gap-2 rounded-lg bg-zinc-100 hover:bg-zinc-50 px-2 py-1.5";
 
 export interface IRowScaleField {
   scale: ScaleData;
@@ -50,8 +50,8 @@ export function RowScale(props: IRowScale) {
   const [levels] = useAtom(atomLevels);
   const [dataPointVisibility] = useAtom(atomDataPointVisibility);
   return (
-    <RowWithLevelGrid>
-      <header className="space-y-1">
+    <section className={clsx(styles.row, "my-6 grid gap-4 border-b pb-6")}>
+      <header className={clsx(styles.header, "space-y-1")}>
         <FieldName className={clsHeaderField} {...props} />
         <Slider
           label="Hue"
@@ -72,7 +72,7 @@ export function RowScale(props: IRowScale) {
           <PopoverPanel
             anchor="bottom start"
             transition
-            className="rounded-lg border bg-white p-3 shadow-lg transition duration-150 data-[closed]:scale-90 data-[closed]:opacity-0"
+            className="rounded-lg border bg-white p-3 shadow-lg transition duration-150 [--anchor-gap:4px] data-[closed]:scale-90 data-[closed]:opacity-0 max-md:w-[calc(100vw-4rem)]"
           >
             <ChromaCurveEditor {...props} />
           </PopoverPanel>
@@ -80,7 +80,7 @@ export function RowScale(props: IRowScale) {
 
         <div className="flex flex-wrap gap-1">
           <button
-            className="btn btn-sm"
+            className="btn"
             onClick={() => {
               navigator.clipboard.writeText(exportScalesAsSVG([scale], levels));
             }}
@@ -88,7 +88,7 @@ export function RowScale(props: IRowScale) {
             <LuShare /> Copy SVG
           </button>
           <Popover className="contents">
-            <PopoverButton className="btn btn-sm">
+            <PopoverButton className="btn">
               <LuTrash />
               Delete
             </PopoverButton>
@@ -110,7 +110,12 @@ export function RowScale(props: IRowScale) {
           </Popover>
         </div>
       </header>
-      <ol className="contents">
+      <ol
+        className={
+          (styles.levels,
+          "-mb-3 flex max-w-full gap-1 gap-y-3 overflow-auto pb-3")
+        }
+      >
         {levels.map((level, i) => {
           const color = colors[i];
           const hex = formatHex(color);
@@ -122,8 +127,8 @@ export function RowScale(props: IRowScale) {
             c: 0,
           };
           return (
-            <li className="flex flex-col space-y-1 text-sm" key={level}>
-              <div>
+            <li className="grid min-w-20 gap-1 text-sm" key={level}>
+              <div className="grid grid-rows-2 self-stretch">
                 <button
                   className="group flex min-h-9 w-full flex-grow touch-none items-center justify-center rounded-t border border-b-0 text-xs"
                   style={{
@@ -152,34 +157,25 @@ export function RowScale(props: IRowScale) {
               {dataPointVisibility.length > 0 && (
                 <dl
                   className={clsx(
-                    "grid grid-cols-3 gap-1 px-2 font-mono [&_dd]:col-span-2 [&_dd]:text-right [&_dt]:text-gray-500",
-                    "select-none",
+                    "grid select-none grid-cols-3 px-2 font-mono [&_dd]:col-span-2 [&_dd]:text-right [&_dt]:text-gray-500",
                   )}
                 >
                   {dataPointVisibility.includes(
                     EnumViewDataPoint.ScaleLevel,
                   ) && <DtDd term="lv." desc={level} />}
                   {dataPointVisibility.includes(EnumViewDataPoint.LCH_L) && (
-                    <DtDd
-                      term="L"
-                      desc={round(color.l, 2)}
-                      copyString={cssOKLCH}
-                    />
+                    <DtDd term="L" desc={round(color.l, 2)} />
                   )}
                   {dataPointVisibility.includes(EnumViewDataPoint.LCH_C) && (
-                    <DtDd
-                      term="C"
-                      desc={round(color.c, 2)}
-                      copyString={cssOKLCH}
-                    />
+                    <DtDd term="C" desc={round(color.c, 2)} />
                   )}
                   {dataPointVisibility.includes(EnumViewDataPoint.LCH_H) && (
-                    <DtDd term="H" desc={color.h} copyString={cssOKLCH} />
+                    <DtDd term="H" desc={color.h} />
                   )}
                   {dataPointVisibility.includes(EnumViewDataPoint.Hex) && (
                     <DtDd
                       term="#"
-                      desc={hex.replace("#", "")}
+                      desc={hex.replace("#", "").toUpperCase()}
                       copyString={hex}
                     />
                   )}
@@ -201,7 +197,7 @@ export function RowScale(props: IRowScale) {
           );
         })}
       </ol>
-    </RowWithLevelGrid>
+    </section>
   );
 }
 

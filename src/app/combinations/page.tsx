@@ -183,8 +183,8 @@ export default function PageCombinations() {
   }, [scales, bgScaleName, fgScaleName, levels]);
   return (
     <section className="my-8 space-y-8">
-      <h2 className="flex items-center gap-1 text-2xl font-medium">
-        combos:{" "}
+      <h2 className="flex flex-wrap items-center gap-1 text-2xl font-medium">
+        <span className="max-sm:mb-2 max-sm:block max-sm:w-full">combos:</span>
         <ScaleSelect
           scales={scales}
           value={fgScaleName}

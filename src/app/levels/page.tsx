@@ -17,7 +17,7 @@ import {
 export default function PageLevels() {
   const [levels, setLevels] = useAtom(atomLevels);
   return (
-    <section className="my-8 grid grid-cols-12 gap-8">
+    <section className="my-8 grid grid-cols-2 gap-8 md:grid-cols-12">
       <header className="prose col-span-4">
         <h2>Levels</h2>
         <p>

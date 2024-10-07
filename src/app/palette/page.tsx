@@ -29,7 +29,7 @@ const styleLCHGradient = {
 export default function PageInfo() {
   const { scales, updateScale, deleteScale } = useUserData();
   return (
-    <div className="m-8 grid gap-8 md:grid-cols-2">
+    <div className="my-8 grid gap-8 md:grid-cols-2">
       <div className="space-y-8">
         <ColorWheel />
         <MiniColorScales />
@@ -68,7 +68,10 @@ export default function PageInfo() {
                 clsOutput="text-right"
                 label={
                   <span>
-                    x<sup>chroma</sup>
+                    x
+                    <sup>
+                      c<span className="max-sm:hidden">hroma</span>
+                    </sup>
                   </span>
                 }
                 min={0}

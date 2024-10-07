@@ -23,7 +23,7 @@ export default function PageInfo() {
   const [cssVariables] = useAtom(atomCSSVariables);
   return (
     <div className="mt-8">
-      <header className="my-4 flex justify-between">
+      <header className="my-4 flex flex-wrap justify-between gap-2">
         <h2 className="text-2xl font-bold">Import / Export</h2>
         <SharableLink />
       </header>

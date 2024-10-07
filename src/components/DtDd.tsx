@@ -15,7 +15,11 @@ export const DtDd = ({
     <>
       <dt>{term}</dt>
       <dd
-        className={clsx("group relative", !!copyString && "cursor-pointer")}
+        className={clsx(
+          "group relative",
+          !!copyString &&
+            "cursor-pointer underline decoration-zinc-400 hover:text-blue-500",
+        )}
         onClick={() => {
           if (copyString) {
             navigator.clipboard.writeText(copyString);

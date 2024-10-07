@@ -19,21 +19,21 @@ export default function Page() {
   const [data] = useAtom(allColors);
   return (
     <>
-      <section className="mb-2 flex items-center justify-between gap-4">
+      <section className="mb-2 flex max-w-full flex-wrap items-center justify-between gap-4 overflow-auto">
         <div className="flex items-center gap-2">
           <button className="btn" onClick={addNewScale}>
             <LuPlusCircle />
             add scale
           </button>
         </div>
-        <Fieldset className="flex items-center gap-2">
+        <Fieldset className="flex flex-grow items-center justify-between gap-3 text-sm md:justify-end md:text-base">
           <Legend>
             <LuEye />
           </Legend>
           {uiDataEnumViewDataPoint.map(({ type, label }) => {
             const checked = dataPointVisibility.includes(type);
             return (
-              <Field className="flex items-center gap-1" key={type}>
+              <Field className="flex items-center gap-1 leading-4" key={type}>
                 <Input
                   type="checkbox"
                   checked={checked}
