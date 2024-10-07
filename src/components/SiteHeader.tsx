@@ -44,12 +44,8 @@ export const SiteHeader = () => {
             className="xs:-translate-x-8 grid transform gap-2 rounded-lg border bg-white p-4 [--anchor-gap:4px]"
           >
             {menuItems.map(({ label, href }) => (
-              <MenuItem>
-                <Link
-                  className={clsx(clsLink, "py-2")}
-                  href={fHRef(href)}
-                  key={href}
-                >
+              <MenuItem key={href}>
+                <Link className={clsx(clsLink, "py-2")} href={fHRef(href)}>
                   {label}
                 </Link>
               </MenuItem>
