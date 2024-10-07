@@ -10,7 +10,7 @@ import { MiniColorScales } from "@/components/MiniColorScales";
 import { SharableLink } from "@/components/SharableLink";
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 import { useAtom } from "jotai";
-import { ReactNode } from "react";
+import { ReactNode, Suspense } from "react";
 import { LuCopy } from "react-icons/lu";
 
 const clsTabButton =
@@ -25,7 +25,9 @@ export default function PageInfo() {
     <div className="mt-8">
       <header className="my-4 flex flex-wrap justify-between gap-2">
         <h2 className="text-2xl font-bold">Import / Export</h2>
-        <SharableLink />
+        <Suspense>
+          <SharableLink />
+        </Suspense>
       </header>
       <figure className="my-4 border p-4">
         <MiniColorScales />
