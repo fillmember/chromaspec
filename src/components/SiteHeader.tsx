@@ -14,7 +14,7 @@ const menuItems = [
   { label: "Palette", href: "/palette" },
   { label: "Scales", href: "/" },
   { label: "Combinations", href: "/combinations" },
-  { label: "Import/Export", href: "/import-export" },
+  { label: "Export", href: "/export" },
   { label: "Info", href: "/info" },
 ];
 
