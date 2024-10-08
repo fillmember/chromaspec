@@ -9,7 +9,7 @@ export const defaultScales: ScaleData[] = [
   {
     name: "orange",
     hue: 55,
-    chroma: { peak: 0.59, steepness: 0.55, multiplier: 1 },
+    chroma: { peak: 0.52, steepness: 0.6, multiplier: 1 },
   },
   {
     name: "yellow",

@@ -259,7 +259,7 @@ export function ChromaCurveEditor(props: IRowScaleField) {
       <Slider
         label="Multiplier"
         min={0}
-        max={1.5}
+        max={2}
         step={0.01}
         value={chroma.multiplier}
         setValue={(newValue) =>
