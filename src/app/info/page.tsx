@@ -150,13 +150,17 @@ export default function PageInfo() {
       <ul>
         <li>
           Code by:{" "}
-          <a href="https://fillmember.net" target="_blank">
+          <a href="https://fillmember.net" target="_blank" rel="noreferrer">
             fillmember.net
           </a>
         </li>
         <li>
           Github Repo:
-          <a href="https://github.com/fillmember/chromaspec" target="_blank">
+          <a
+            href="https://github.com/fillmember/chromaspec"
+            target="_blank"
+            rel="noreferrer"
+          >
             github.com/fillmember/chromaspec
           </a>
         </li>
