@@ -260,7 +260,7 @@ export function ChromaCurveEditor(props: IRowScaleField) {
         label="Multiplier"
         min={0}
         max={1.5}
-        step={0.05}
+        step={0.01}
         value={chroma.multiplier}
         setValue={(newValue) =>
           updateScale({ chroma: { ...chroma, multiplier: newValue } })

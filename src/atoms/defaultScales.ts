@@ -34,6 +34,6 @@ export const defaultScales: ScaleData[] = [
   {
     name: "neutral",
     hue: 235,
-    chroma: { peak: 0.43, steepness: 0.55, multiplier: 0.01 },
+    chroma: { peak: 0.63, steepness: 0.8, multiplier: 0.02 },
   },
 ];
