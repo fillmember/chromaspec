@@ -112,8 +112,7 @@ export function RowScale(props: IRowScale) {
       </header>
       <ol
         className={
-          (styles.levels,
-          "-mb-3 flex max-w-full gap-1 gap-y-3 overflow-auto pb-3")
+          (styles.levels, "-mb-3 flex max-w-full gap-px overflow-auto pb-3")
         }
       >
         {levels.map((level, i) => {

@@ -3,18 +3,18 @@ import { ScaleData } from "./userdata";
 export const defaultScales: ScaleData[] = [
   {
     name: "red",
-    hue: 30,
-    chroma: { peak: 0.43, steepness: 0.55, multiplier: 1 },
+    hue: 25,
+    chroma: { peak: 0.66, steepness: 0.68, multiplier: 1 },
   },
   {
     name: "orange",
     hue: 55,
-    chroma: { peak: 0.43, steepness: 0.55, multiplier: 1 },
+    chroma: { peak: 0.59, steepness: 0.55, multiplier: 1 },
   },
   {
     name: "yellow",
     hue: 85,
-    chroma: { peak: 0.48, steepness: 0.68, multiplier: 1 },
+    chroma: { peak: 0.48, steepness: 0.56, multiplier: 1 },
   },
   {
     name: "green",

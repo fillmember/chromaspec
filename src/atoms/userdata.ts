@@ -76,6 +76,7 @@ export const allColors = atom<ScaleDataWithComputedData[]>((get) => {
           ) * multiplier;
         const h = hue;
         const color = clampChroma({ mode: "oklch", l, c, h }, "oklch", "p3");
+        color.c = c * 0.25 + color.c * 0.75;
         color.c = round(color.c, 5);
         return color;
       }),
