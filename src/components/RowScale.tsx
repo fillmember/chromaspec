@@ -5,29 +5,29 @@ import {
   EnumViewDataPoint,
 } from "@/atoms/applicationState";
 import {
-  ScaleDataWithComputedData,
-  ScaleData,
   atomLevels,
   exportScalesAsSVG,
+  ScaleData,
+  ScaleDataWithComputedData,
 } from "@/atoms/userdata";
 import {
   Field,
-  Label,
+  Fieldset,
   Input,
+  Label,
   Popover,
   PopoverButton,
   PopoverPanel,
-  Fieldset,
 } from "@headlessui/react";
 import clsx from "clsx";
+import { formatCss, formatHex, Oklch, wcagLuminance } from "culori";
 import { useAtom } from "jotai";
 import { round } from "lodash";
-import { LuCopy, LuShare, LuTrash } from "react-icons/lu";
-import { DtDd } from "./DtDd";
-import { formatCss, formatHex, Oklch, wcagLuminance } from "culori";
-import { Slider } from "./Slider";
+import * as icons from "lucide-react";
 import { CurveVisualizer } from "./CurveVisualizer";
+import { DtDd } from "./DtDd";
 import styles from "./RowScale.module.css";
+import { Slider } from "./Slider";
 
 const clsHeaderField =
   "flex items-center gap-2 rounded-lg bg-zinc-100 hover:bg-zinc-50 px-2 py-1.5";
@@ -85,11 +85,11 @@ export function RowScale(props: IRowScale) {
               navigator.clipboard.writeText(exportScalesAsSVG([scale], levels));
             }}
           >
-            <LuShare /> Copy SVG
+            <icons.Share /> Copy SVG
           </button>
           <Popover className="contents">
             <PopoverButton className="btn">
-              <LuTrash />
+              <icons.Trash />
               Delete
             </PopoverButton>
             <PopoverPanel
@@ -137,7 +137,7 @@ export function RowScale(props: IRowScale) {
                   onClick={() => navigator.clipboard.writeText(cssOKLCH)}
                 >
                   <span className="flex gap-1 opacity-0 group-hover:opacity-100">
-                    <LuCopy /> OKLCH
+                    <icons.Copy /> OKLCH
                   </span>
                 </button>
                 <button
@@ -149,7 +149,7 @@ export function RowScale(props: IRowScale) {
                   onClick={() => navigator.clipboard.writeText(hex)}
                 >
                   <span className="flex gap-1 opacity-0 group-hover:opacity-100">
-                    <LuCopy /> HEX
+                    <icons.Copy /> HEX
                   </span>
                 </button>
               </div>

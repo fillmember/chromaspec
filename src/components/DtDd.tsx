@@ -1,6 +1,6 @@
 import clsx from "clsx";
+import * as icons from "lucide-react";
 import { ReactNode } from "react";
-import { LuCopy } from "react-icons/lu";
 
 export const DtDd = ({
   term,
@@ -28,7 +28,7 @@ export const DtDd = ({
       >
         {desc}
         {!!copyString && (
-          <LuCopy className="absolute bottom-0 right-0 top-0 bg-white opacity-0 group-hover:opacity-100" />
+          <icons.Copy className="absolute bottom-0 right-0 top-0 bg-white opacity-0 group-hover:opacity-100" />
         )}
       </dd>
     </>
