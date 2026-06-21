@@ -4,7 +4,7 @@ const updateHistory = (params: URLSearchParams) => {
   history.replaceState(
     null,
     "",
-    window.location.origin + "?" + params.toString(),
+    window.location.pathname + "?" + params.toString(),
   );
 };
 
