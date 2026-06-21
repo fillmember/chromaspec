@@ -9,7 +9,7 @@ import { RowScale } from "@/components/RowScale";
 import { useUserData } from "@/utils/useUserData";
 import { Field, Fieldset, Input, Label, Legend } from "@headlessui/react";
 import { useAtom } from "jotai/react";
-import { LuEye, LuPlusCircle } from "react-icons/lu";
+import * as icons from "lucide-react";
 
 export default function Page() {
   const [dataPointVisibility, setDataPointVisibility] = useAtom(
@@ -22,13 +22,13 @@ export default function Page() {
       <section className="mb-2 flex max-w-full flex-wrap items-center justify-between gap-4 overflow-auto">
         <div className="flex items-center gap-2">
           <button className="btn" onClick={addNewScale}>
-            <LuPlusCircle />
+            <icons.PlusCircle />
             add scale
           </button>
         </div>
         <Fieldset className="flex flex-grow items-center justify-between gap-3 text-sm md:justify-end md:text-base">
           <Legend>
-            <LuEye />
+            <icons.Eye />
           </Legend>
           {uiDataEnumViewDataPoint.map(({ type, label }) => {
             const checked = dataPointVisibility.includes(type);

@@ -9,12 +9,13 @@ import {
 } from "@headlessui/react";
 import { wcagContrast } from "culori";
 import clsx from "clsx";
+import { formatCss, type Oklch, wcagContrast } from "culori";
 import { useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import { round } from "lodash";
+import * as icons from "lucide-react";
 import Link from "next/link";
 import { ReactNode, useMemo } from "react";
-import { LuChevronDown } from "react-icons/lu";
 
 interface Combination {
   bg: Swatch;
@@ -122,7 +123,7 @@ const ScaleSelect = ({
             {selectedScale.name}
           </>
         )}
-        <LuChevronDown />
+        <icons.ChevronDown />
       </ListboxButton>
       <ListboxOptions
         anchor="bottom start"

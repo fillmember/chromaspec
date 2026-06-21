@@ -1,9 +1,9 @@
 "use client";
 
-import { Field, Label, Input, Button } from "@headlessui/react";
-import { useEffect, useState } from "react";
-import { LuCopy } from "react-icons/lu";
+import { Button, Field, Input, Label } from "@headlessui/react";
+import * as icons from "lucide-react";
 import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export const SharableLink = () => {
   const searchParams = useSearchParams();
@@ -27,7 +27,7 @@ export const SharableLink = () => {
           window.navigator.clipboard.writeText(shareLink);
         }}
       >
-        <LuCopy /> Copy
+        <icons.Copy /> Copy
       </Button>
     </Field>
   );

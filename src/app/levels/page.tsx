@@ -7,12 +7,7 @@ import { formatCss } from "culori";
 import { produce } from "immer";
 import { useAtom } from "jotai/react";
 import sortedUniq from "lodash/sortedUniq";
-import {
-  LuListOrdered,
-  LuPlusCircle,
-  LuRefreshCcw,
-  LuTrash,
-} from "react-icons/lu";
+import * as icons from "lucide-react";
 
 export default function PageLevels() {
   const [levels, setLevels] = useAtom(atomLevels);
@@ -36,7 +31,7 @@ export default function PageLevels() {
           className="btn btn-full"
           onClick={() => setLevels([...levels, 100])}
         >
-          <LuPlusCircle /> add level
+          <icons.PlusCircle /> add level
         </button>
         <button
           className="btn btn-full"
@@ -46,7 +41,7 @@ export default function PageLevels() {
             setLevels(sortedUniq(newLevels));
           }}
         >
-          <LuListOrdered /> sort & dedupe
+          <icons.ListOrdered /> sort & dedupe
         </button>
         <button
           className="btn btn-full"
@@ -54,7 +49,7 @@ export default function PageLevels() {
             setLevels(defaultLevels);
           }}
         >
-          <LuRefreshCcw /> reset to default
+          <icons.RefreshCcw /> reset to default
         </button>
       </aside>
     </section>
@@ -106,7 +101,7 @@ const Level = (props: { index: number; level: number }) => {
           className="btn btn-sm"
           onClick={() => setLevels(deleteItemAtIndex(levels, index))}
         >
-          <LuTrash /> delete
+          <icons.Trash /> delete
         </button>
       </td>
     </tr>

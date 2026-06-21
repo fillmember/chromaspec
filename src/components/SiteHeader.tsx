@@ -2,9 +2,9 @@
 
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import clsx from "clsx";
+import * as icons from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { LuMenu } from "react-icons/lu";
 
 const clsLink =
   "px-2 -mx-0.5 text-black hover:bg-black hover:text-white rounded";
@@ -38,7 +38,7 @@ export const SiteHeader = () => {
       </nav>
       <Menu>
         <MenuButton className="btn font-medium md:hidden">
-          <LuMenu /> Menu
+          <icons.Menu /> Menu
           <MenuItems
             anchor="bottom end"
             className="xs:-translate-x-8 grid transform gap-2 rounded-lg border bg-white p-4 [--anchor-gap:4px]"
