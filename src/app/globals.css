@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+.lucide {
+  width: 1em;
+  height: 1em;
+}
+
 @layer components {
   .slider-vertical {
     writing-mode: vertical-lr;

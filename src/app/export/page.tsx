@@ -1,17 +1,17 @@
 "use client";
 
 import {
-  atomTailwindConfig,
-  atomSVGAllScales,
-  atomJSONDesignTokens,
   atomCSSVariables,
+  atomJSONDesignTokens,
+  atomSVGAllScales,
+  atomTailwindConfig,
 } from "@/atoms/userdata";
 import { MiniColorScales } from "@/components/MiniColorScales";
 import { SharableLink } from "@/components/SharableLink";
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
 import { useAtom } from "jotai";
+import * as icons from "lucide-react";
 import { ReactNode, Suspense } from "react";
-import { LuCopy } from "react-icons/lu";
 
 const clsTabButton =
   "px-2 py-1 hover:bg-zinc-200 data-[selected]:bg-zinc-900 data-[selected]:text-zinc-50";
@@ -71,7 +71,7 @@ const CodeArea = ({ title, code }: { title?: ReactNode; code: string }) => {
             navigator.clipboard.writeText(code);
           }}
         >
-          <LuCopy /> copy to clipboard
+          <icons.Copy /> copy to clipboard
         </button>
       </div>
       <pre className="max-h-[36rem] overflow-auto p-4 text-sm">
