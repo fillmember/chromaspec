@@ -5,8 +5,6 @@ import {
   EnumViewDataPoint,
 } from "@/atoms/applicationState";
 import {
-  ScaleDataWithComputedData,
-  ScaleData,
   exportScalesAsSVG,
   ScaleData,
   ScaleDataWithComputedData,
@@ -21,11 +19,10 @@ import {
   PopoverPanel,
 } from "@headlessui/react";
 import clsx from "clsx";
-import { formatCss, formatHex, Oklch, wcagLuminance } from "culori";
+import { formatCss, formatHex, Oklch } from "culori";
 import { useAtom } from "jotai";
 import { round } from "lodash";
 import * as icons from "lucide-react";
-import { formatCss, formatHex, Oklch } from "culori";
 import { CurveVisualizer } from "./CurveVisualizer";
 import { DtDd } from "./DtDd";
 import styles from "./RowScale.module.css";
