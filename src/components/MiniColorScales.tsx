@@ -1,21 +1,20 @@
 "use client";
 
 import { allColors } from "@/atoms/userdata";
-import { formatCss } from "culori";
 import { useAtom } from "jotai/react";
 
 export const MiniColorScales = () => {
   const [scales] = useAtom(allColors);
   return (
     <dl className="grid grid-cols-12 items-center text-sm text-zinc-600">
-      {scales.map(({ name, colors }, index) => (
+      {scales.map(({ name, swatches }, index) => (
         <div className="contents" key={index}>
           <dt>{name}</dt>
           <dd className="col-span-11 flex">
-            {colors.map((color, index) => (
+            {swatches.map((swatch, index) => (
               <div
                 key={index}
-                style={{ backgroundColor: formatCss(color) }}
+                style={{ backgroundColor: swatch.css }}
                 className="h-8 w-full"
               />
             ))}
