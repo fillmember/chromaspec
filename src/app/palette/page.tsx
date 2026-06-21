@@ -83,6 +83,7 @@ export default function PagePalette() {
                     chroma: { ...props.scale.chroma, multiplier },
                   })
                 }
+                description="Scales overall color intensity. Higher values produce more saturated swatches."
               />
             </li>
           );

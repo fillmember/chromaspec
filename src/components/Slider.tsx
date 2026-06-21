@@ -1,4 +1,4 @@
-import { Field, Input, Label } from "@headlessui/react";
+import { Description, Field, Input, Label } from "@headlessui/react";
 import { ReactNode } from "react";
 
 export const Slider = ({
@@ -12,6 +12,7 @@ export const Slider = ({
   clsLabel,
   clsInput,
   clsOutput,
+  description,
 }: {
   label: ReactNode;
   value: number;
@@ -22,6 +23,7 @@ export const Slider = ({
   clsLabel?: string;
   clsInput?: string;
   clsOutput?: string;
+  description?: ReactNode;
   setValue: (x: number) => void;
 }) => (
   <Field className={clsField}>
@@ -38,5 +40,10 @@ export const Slider = ({
       }}
     />
     <output className={clsOutput}>{value}</output>
+    {description && (
+      <Description className="col-span-full col-start-2 text-xs text-zinc-600">
+        {description}
+      </Description>
+    )}
   </Field>
 );
