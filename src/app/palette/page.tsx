@@ -26,7 +26,7 @@ const styleLCHGradient = {
     .join(",")})`,
 };
 
-export default function PageInfo() {
+export default function PagePalette() {
   const { scales, updateScale, deleteScale } = useUserData();
   return (
     <div className="my-8 grid gap-8 md:grid-cols-2">
@@ -35,17 +35,17 @@ export default function PageInfo() {
         <MiniColorScales />
       </div>
       <ol className="grid gap-4">
-        {scales.map((scale, index) => {
+        {scales.map((scale) => {
           const props = {
             scale,
             updateScale: (partialData: Partial<ScaleData>) =>
-              updateScale(index, partialData),
-            deleteScale: () => deleteScale(index),
+              updateScale(scale.id, partialData),
+            deleteScale: () => deleteScale(scale.id),
           };
           return (
             <li
               className="grid grid-cols-7 gap-2 rounded-xl border px-4 py-2"
-              key={index}
+              key={scale.id}
             >
               <FieldName
                 className="col-span-full flex items-baseline gap-4 text-lg"
@@ -131,14 +131,13 @@ const ColorWheel = () => {
           cy={bag.originY}
           r={bag.unitR * 1.5}
         />
-        {scales.map((scale, index) => (
+        {scales.map((scale) => (
           <ColorScale
-            key={index}
+            key={scale.id}
             {...scale}
-            index={index}
             {...bag}
             updateScale={({ hue, multiplier }) => {
-              updateScale(index, {
+              updateScale(scale.id, {
                 hue,
                 chroma: { ...scale.chroma, multiplier },
               });
@@ -152,7 +151,6 @@ const ColorWheel = () => {
 
 const ColorScale = (
   props: ScaleData & {
-    index: number;
     updateScale: (args: { hue: number; multiplier: number }) => void;
     unitR: number;
     originX: number;

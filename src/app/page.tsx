@@ -54,13 +54,13 @@ export default function Page() {
         </Fieldset>
       </section>
       <section className="space-y-4">
-        {data.map((scale, index) => {
+        {data.map((scale) => {
           return (
             <RowScale
-              key={index}
+              key={scale.id}
               scale={scale}
-              updateScale={(partialData) => updateScale(index, partialData)}
-              deleteScale={() => deleteScale(index)}
+              updateScale={(partialData) => updateScale(scale.id, partialData)}
+              deleteScale={() => deleteScale(scale.id)}
             />
           );
         })}

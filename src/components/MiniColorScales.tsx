@@ -7,8 +7,8 @@ export const MiniColorScales = () => {
   const [scales] = useAtom(allColors);
   return (
     <dl className="grid grid-cols-12 items-center text-sm text-zinc-600">
-      {scales.map(({ name, swatches }, index) => (
-        <div className="contents" key={index}>
+      {scales.map(({ id, name, swatches }) => (
+        <div className="contents" key={id}>
           <dt>{name}</dt>
           <dd className="col-span-11 flex">
             {swatches.map((swatch, index) => (

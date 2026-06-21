@@ -108,7 +108,7 @@ const ScaleSelect = ({
   onChange: (newScale: string) => void;
   scales: ScaleDataWithComputedData[];
 }) => {
-  const selectedScale = scales.find((s) => s.name === value);
+  const selectedScale = scales.find((s) => s.id === value);
   return (
     <Listbox value={value} onChange={onChange}>
       <ListboxButton
@@ -128,10 +128,10 @@ const ScaleSelect = ({
         anchor="bottom start"
         className="rounded-lg border bg-white text-lg shadow-lg"
       >
-        {scales.map((candidate: ScaleDataWithComputedData, index) => (
+        {scales.map((candidate: ScaleDataWithComputedData) => (
           <ListboxOption
-            key={index}
-            value={candidate.name}
+            key={candidate.id}
+            value={candidate.id}
             className="flex cursor-pointer items-center gap-4 px-4 py-2 hover:bg-zinc-100"
           >
             <ScaleDisplay scale={candidate} />
@@ -143,44 +143,44 @@ const ScaleSelect = ({
   );
 };
 
-const atomSelectedBGScaleName = atomWithStorage<string>(
+const atomSelectedBGScaleId = atomWithStorage<string>(
   "chromaspec-combo-bg-scale",
   "",
 );
-const atomSelectedFGScaleName = atomWithStorage<string>(
+const atomSelectedFGScaleId = atomWithStorage<string>(
   "chromaspec-combo-fg-scale",
   "",
 );
 
 export default function PageCombinations() {
   const [scales] = useAtom(allColors);
-  const [bgScaleName, setBGScaleName] = useAtom(atomSelectedBGScaleName);
-  const [fgScaleName, setFGScaleName] = useAtom(atomSelectedFGScaleName);
+  const [bgScaleId, setBGScaleId] = useAtom(atomSelectedBGScaleId);
+  const [fgScaleId, setFGScaleId] = useAtom(atomSelectedFGScaleId);
   const combos = useMemo(() => {
-    if (!bgScaleName || !fgScaleName) return {};
-    const bgScale = scales.find((s) => s.name === bgScaleName);
-    const fgScale = scales.find((s) => s.name === fgScaleName);
+    if (!bgScaleId || !fgScaleId) return {};
+    const bgScale = scales.find((s) => s.id === bgScaleId);
+    const fgScale = scales.find((s) => s.id === fgScaleId);
     if (!bgScale || !fgScale) return {};
     return {
       "7": getCombosWithContrastRatioOrMore(bgScale, fgScale, 7),
       "4.5": getCombosWithContrastRatioOrMore(bgScale, fgScale, 4.5, 7),
       "3": getCombosWithContrastRatioOrMore(bgScale, fgScale, 3, 4.5),
     };
-  }, [scales, bgScaleName, fgScaleName]);
+  }, [scales, bgScaleId, fgScaleId]);
   return (
     <section className="my-8 space-y-8">
       <h2 className="flex flex-wrap items-center gap-1 text-2xl font-medium">
         <span className="max-sm:mb-2 max-sm:block max-sm:w-full">combos:</span>
         <ScaleSelect
           scales={scales}
-          value={fgScaleName}
-          onChange={setFGScaleName}
+          value={fgScaleId}
+          onChange={setFGScaleId}
         />{" "}
         on{" "}
         <ScaleSelect
           scales={scales}
-          value={bgScaleName}
-          onChange={setBGScaleName}
+          value={bgScaleId}
+          onChange={setBGScaleId}
         />
       </h2>
       {scales.length === 0 && (

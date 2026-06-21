@@ -14,6 +14,7 @@ import { keyBy, mapValues, round, zipObject } from "lodash";
 import * as urlStorage from "@/utils/searchStringStorage";
 
 export interface ScaleData {
+  id: string;
   name: string;
   hue: number;
   chroma: {
@@ -29,8 +30,12 @@ const arrEncoder = (x: number[]) => x.join("_");
 const arrDecoder = (x: string) => x.split("_").map((x) => parseInt(x));
 const objEncoder = (x: object) =>
   encodeURIComponent(jsoncrush.default.crush(JSON.stringify(x)));
-const objDecoder = (x: string) =>
-  JSON.parse(jsoncrush.default.uncrush(decodeURIComponent(x)));
+const objDecoder = (x: string): ScaleData[] => {
+  const decoded = JSON.parse(jsoncrush.default.uncrush(decodeURIComponent(x)));
+  return (decoded as Array<Omit<ScaleData, "id"> & { id?: string }>).map(
+    (s) => ({ ...s, id: s.id ?? crypto.randomUUID() }),
+  );
+};
 
 export const atomLevels = atomWithStorage("l", defaultLevels, {
   getItem(key, initialValue) {
@@ -97,7 +102,8 @@ const computeSwatch = (
 export const allColors = atom<ScaleDataWithComputedData[]>((get) => {
   const levels = get(atomLevels);
   const userData = get(atomUserData);
-  return userData.map(({ name, hue, chroma }) => ({
+  return userData.map(({ id, name, hue, chroma }) => ({
+    id,
     name,
     hue,
     chroma,
