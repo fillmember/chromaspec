@@ -1,7 +1,5 @@
-import { atom } from "jotai";
-import { atomWithStorage } from "jotai/utils";
-import * as jsoncrush from "jsoncrush";
-import { defaultScales } from "./defaultScales";
+import { bellShapeCurve } from "@/utils/bellShapeCurve";
+import * as urlStorage from "@/utils/searchStringStorage";
 import {
   clampChroma,
   formatCss,
@@ -9,9 +7,12 @@ import {
   wcagLuminance,
   type Oklch,
 } from "culori";
-import { bellShapeCurve } from "@/utils/bellShapeCurve";
+import { atom } from "jotai";
+import { atomWithStorage } from "jotai/utils";
+import * as jsoncrush from "jsoncrush";
 import { keyBy, mapValues, round, zipObject } from "lodash";
-import * as urlStorage from "@/utils/searchStringStorage";
+import * as Purify from "purify-ts";
+import { defaultScales } from "./defaultScales";
 
 export interface ScaleData {
   name: string;
@@ -25,18 +26,44 @@ export interface ScaleData {
 
 export const defaultLevels = [2, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 95];
 
+const finiteNumber = Purify.Codec.custom<number>({
+  decode: (input) =>
+    typeof input === "number" && Number.isFinite(input)
+      ? Purify.Either.of(input)
+      : Purify.Left(`Expected a finite number, got ${String(input)}`),
+  encode: (input) => input,
+});
+
+const chromaCodec = Purify.Codec.interface({
+  multiplier: Purify.number,
+  peak: Purify.number,
+  steepness: Purify.number,
+});
+
+const scaleDataCodec = Purify.Codec.interface({
+  name: Purify.string,
+  hue: Purify.number,
+  chroma: chromaCodec,
+});
+
 const arrEncoder = (x: number[]) => x.join("_");
-const arrDecoder = (x: string) => x.split("_").map((x) => parseInt(x));
+const arrDecode = (raw: string): Purify.Either<string, number[]> =>
+  Purify.array(finiteNumber).decode(raw.split("_").map((x) => parseInt(x)));
+
 const objEncoder = (x: object) =>
   encodeURIComponent(jsoncrush.default.crush(JSON.stringify(x)));
-const objDecoder = (x: string) =>
-  JSON.parse(jsoncrush.default.uncrush(decodeURIComponent(x)));
+const objDecode = (raw: string): Purify.Either<string, ScaleData[]> =>
+  Purify.Either.encase(() =>
+    JSON.parse(jsoncrush.default.uncrush(decodeURIComponent(raw))),
+  )
+    .mapLeft((err) => (err as Error).message)
+    .chain((parsed) => Purify.array(scaleDataCodec).decode(parsed));
 
 export const atomLevels = atomWithStorage("l", defaultLevels, {
   getItem(key, initialValue) {
     return urlStorage.getItem<number[]>(key, initialValue, {
       encode: arrEncoder,
-      decode: arrDecoder,
+      decode: arrDecode,
     });
   },
   setItem(key, value) {
@@ -49,7 +76,7 @@ export const atomUserData = atomWithStorage<ScaleData[]>("s", defaultScales, {
   getItem(key, initialValue) {
     return urlStorage.getItem<ScaleData[]>(key, initialValue, {
       encode: objEncoder,
-      decode: objDecoder,
+      decode: objDecode,
     });
   },
   setItem(key, value) {
