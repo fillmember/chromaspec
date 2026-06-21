@@ -7,7 +7,6 @@ import {
 import {
   ScaleDataWithComputedData,
   ScaleData,
-  atomLevels,
   exportScalesAsSVG,
 } from "@/atoms/userdata";
 import {
@@ -24,7 +23,7 @@ import { useAtom } from "jotai";
 import { round } from "lodash";
 import { LuCopy, LuShare, LuTrash } from "react-icons/lu";
 import { DtDd } from "./DtDd";
-import { formatCss, formatHex, Oklch, wcagLuminance } from "culori";
+import { formatCss, formatHex, Oklch } from "culori";
 import { Slider } from "./Slider";
 import { CurveVisualizer } from "./CurveVisualizer";
 import styles from "./RowScale.module.css";
@@ -46,8 +45,6 @@ export interface IRowScale {
 
 export function RowScale(props: IRowScale) {
   const { scale, updateScale, deleteScale } = props;
-  const { colors } = scale;
-  const [levels] = useAtom(atomLevels);
   const [dataPointVisibility] = useAtom(atomDataPointVisibility);
   return (
     <section className={clsx(styles.row, "my-6 grid gap-4 border-b pb-6")}>
@@ -82,7 +79,7 @@ export function RowScale(props: IRowScale) {
           <button
             className="btn"
             onClick={() => {
-              navigator.clipboard.writeText(exportScalesAsSVG([scale], levels));
+              navigator.clipboard.writeText(exportScalesAsSVG([scale]));
             }}
           >
             <LuShare /> Copy SVG
@@ -115,14 +112,11 @@ export function RowScale(props: IRowScale) {
           (styles.levels, "-mb-3 flex max-w-full gap-px overflow-auto pb-3")
         }
       >
-        {levels.map((level, i) => {
-          const color = colors[i];
-          const hex = formatHex(color);
-          const cssOKLCH = formatCss(color);
-          const relativeLuminance = round(wcagLuminance(color), 2);
+        {scale.swatches.map((swatch) => {
+          const { level, oklch, hex, css: cssOKLCH, luminance } = swatch;
           const onSurface: Oklch = {
             mode: "oklch",
-            l: color.l > 0.5 ? 0 : 1,
+            l: oklch.l > 0.5 ? 0 : 1,
             c: 0,
           };
           return (
@@ -163,13 +157,13 @@ export function RowScale(props: IRowScale) {
                     EnumViewDataPoint.ScaleLevel,
                   ) && <DtDd term="lv." desc={level} />}
                   {dataPointVisibility.includes(EnumViewDataPoint.LCH_L) && (
-                    <DtDd term="L" desc={round(color.l, 2)} />
+                    <DtDd term="L" desc={round(oklch.l, 2)} />
                   )}
                   {dataPointVisibility.includes(EnumViewDataPoint.LCH_C) && (
-                    <DtDd term="C" desc={round(color.c, 2)} />
+                    <DtDd term="C" desc={round(oklch.c, 2)} />
                   )}
                   {dataPointVisibility.includes(EnumViewDataPoint.LCH_H) && (
-                    <DtDd term="H" desc={color.h} />
+                    <DtDd term="H" desc={oklch.h} />
                   )}
                   {dataPointVisibility.includes(EnumViewDataPoint.Hex) && (
                     <DtDd
@@ -187,7 +181,7 @@ export function RowScale(props: IRowScale) {
                           L<sup>rel</sup>
                         </>
                       }
-                      desc={relativeLuminance}
+                      desc={luminance}
                     />
                   )}
                 </dl>

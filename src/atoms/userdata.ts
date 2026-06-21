@@ -2,7 +2,13 @@ import { atom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import * as jsoncrush from "jsoncrush";
 import { defaultScales } from "./defaultScales";
-import { clampChroma, formatCss, formatHex, type Oklch } from "culori";
+import {
+  clampChroma,
+  formatCss,
+  formatHex,
+  wcagLuminance,
+  type Oklch,
+} from "culori";
 import { bellShapeCurve } from "@/utils/bellShapeCurve";
 import { keyBy, mapValues, round, zipObject } from "lodash";
 import * as urlStorage from "@/utils/searchStringStorage";
@@ -52,54 +58,66 @@ export const atomUserData = atomWithStorage<ScaleData[]>("s", defaultScales, {
   removeItem: urlStorage.remove,
 });
 
-export interface ScaleDataWithComputedData extends ScaleData {
-  colors: Oklch[];
+export interface Swatch {
+  level: number;
+  oklch: Oklch;
+  hex: string;
+  css: string;
+  luminance: number;
 }
+
+export interface ScaleDataWithComputedData extends ScaleData {
+  swatches: Swatch[];
+}
+
+const computeSwatch = (
+  level: number,
+  index: number,
+  count: number,
+  hue: number,
+  chroma: ScaleData["chroma"],
+): Swatch => {
+  const { peak, steepness, multiplier } = chroma;
+  const l = (100 - level) / 100;
+  const c =
+    bellShapeCurve(peak, 0.001 * Math.pow(1000, steepness), index / count) *
+    multiplier;
+  const oklch = clampChroma({ mode: "oklch", l, c, h: hue }, "oklch", "p3");
+  oklch.c = round(c * 0.25 + oklch.c * 0.75, 5);
+  oklch.h = oklch.h ?? 0;
+  return {
+    level,
+    oklch,
+    hex: formatHex(oklch),
+    css: formatCss(oklch),
+    luminance: round(wcagLuminance(oklch), 2),
+  };
+};
 
 export const allColors = atom<ScaleDataWithComputedData[]>((get) => {
   const levels = get(atomLevels);
   const userData = get(atomUserData);
-  return userData.map(({ name, hue, chroma }) => {
-    const { peak, steepness, multiplier } = chroma;
-    return {
-      name,
-      hue,
-      chroma,
-      levels,
-      colors: levels.map((level, i) => {
-        const l = (100 - level) / 100;
-        const c =
-          bellShapeCurve(
-            peak,
-            0.001 * Math.pow(1000, steepness),
-            i / levels.length,
-          ) * multiplier;
-        const h = hue;
-        const color = clampChroma({ mode: "oklch", l, c, h }, "oklch", "p3");
-        color.c = c * 0.25 + color.c * 0.75;
-        color.c = round(color.c, 5);
-        return color;
-      }),
-    };
-  });
+  return userData.map(({ name, hue, chroma }) => ({
+    name,
+    hue,
+    chroma,
+    swatches: levels.map((level, index) =>
+      computeSwatch(level, index, levels.length, hue, chroma),
+    ),
+  }));
 });
 
 /* - - - - */
 
 export const atomSVGAllScales = atom<string>((get) => {
   const scales = get(allColors);
-  const levels = get(atomLevels);
   return `<svg>${scales
     .map((scale, i) => {
       const groupY = i * 120;
-      const rects = scale.colors.map((c, i) => {
-        const x = i * 100;
+      const rects = scale.swatches.map((swatch, j) => {
+        const x = j * 100;
         const y = 0;
-        return `\n    <rect id="level ${
-          levels[i]
-        }" width="100" height="100" x="${x}" y="${y}" fill="${formatHex(
-          c,
-        )}" />`;
+        return `\n    <rect id="level ${swatch.level}" width="100" height="100" x="${x}" y="${y}" fill="${swatch.hex}" />`;
       });
       return `\n  <g id="${scale.name}" y="${groupY}">${rects.join("")}\n  </g>`;
     })
@@ -108,12 +126,11 @@ export const atomSVGAllScales = atom<string>((get) => {
 
 export const atomTailwindConfig = atom<string>((get) => {
   const scales = get(allColors);
-  const levels = get(atomLevels);
   return JSON.stringify(
     mapValues(keyBy(scales, "name"), (scale) =>
       zipObject(
-        levels,
-        scale.colors.map((color) => formatHex(color)),
+        scale.swatches.map((swatch) => swatch.level),
+        scale.swatches.map((swatch) => swatch.hex),
       ),
     ),
     null,
@@ -123,17 +140,16 @@ export const atomTailwindConfig = atom<string>((get) => {
 
 export const atomJSONDesignTokens = atom<string>((get) => {
   const scales = get(allColors);
-  const levels = get(atomLevels);
   return JSON.stringify(
     mapValues(keyBy(scales, "name"), (scale) =>
       zipObject(
-        levels,
-        scale.colors.map((color) => ({
-          lightness: color.l,
-          chroma: color.c,
-          hue: color.h,
-          css: formatCss(color),
-          hex: formatHex(color),
+        scale.swatches.map((swatch) => swatch.level),
+        scale.swatches.map(({ oklch, css, hex }) => ({
+          lightness: oklch.l,
+          chroma: oklch.c,
+          hue: oklch.h,
+          css,
+          hex,
         })),
       ),
     ),
@@ -144,12 +160,10 @@ export const atomJSONDesignTokens = atom<string>((get) => {
 
 export const atomCSSVariables = atom<string>((get) => {
   const scales = get(allColors);
-  const levels = get(atomLevels);
   return scales
     .flatMap((scale) =>
-      scale.colors.map(
-        (color, index) =>
-          `--color-${scale.name}-${levels[index]}: ${formatCss(color)};`,
+      scale.swatches.map(
+        (swatch) => `--color-${scale.name}-${swatch.level}: ${swatch.css};`,
       ),
     )
     .join("\n");
@@ -157,19 +171,14 @@ export const atomCSSVariables = atom<string>((get) => {
 
 //
 
-export const exportScalesAsSVG = (
-  scales: ScaleDataWithComputedData[],
-  levels: number[],
-) => {
+export const exportScalesAsSVG = (scales: ScaleDataWithComputedData[]) => {
   return `<svg>${scales
     .map((scale, i) => {
       const groupY = i * 120;
-      const rects = scale.colors.map((c, i) => {
-        const x = i * 100;
+      const rects = scale.swatches.map((swatch, j) => {
+        const x = j * 100;
         const y = 0;
-        return `<rect id="level ${levels[i]}" width="100" height="100" x="${x}" y="${y}" fill="${formatHex(
-          c,
-        )}" />`;
+        return `<rect id="level ${swatch.level}" width="100" height="100" x="${x}" y="${y}" fill="${swatch.hex}" />`;
       });
       return `<g id="Scale with Hue ${scale.hue}" y="${groupY}">${rects.join("")}</g>`;
     })

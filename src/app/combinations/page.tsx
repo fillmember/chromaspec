@@ -1,17 +1,13 @@
 "use client";
 
-import {
-  allColors,
-  atomLevels,
-  ScaleDataWithComputedData,
-} from "@/atoms/userdata";
+import { allColors, ScaleDataWithComputedData, Swatch } from "@/atoms/userdata";
 import {
   Listbox,
   ListboxButton,
   ListboxOption,
   ListboxOptions,
 } from "@headlessui/react";
-import { type Oklch, wcagContrast, formatCss } from "culori";
+import { wcagContrast } from "culori";
 import clsx from "clsx";
 import { useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
@@ -21,32 +17,23 @@ import { ReactNode, useMemo } from "react";
 import { LuChevronDown } from "react-icons/lu";
 
 interface Combination {
-  bg: Oklch;
-  bgLevel: number;
-  fg: Oklch;
-  fgLevel: number;
+  bg: Swatch;
+  fg: Swatch;
   contrast: number;
 }
 
 const getCombosWithContrastRatioOrMore = (
-  levels: number[],
   bgScale: ScaleDataWithComputedData,
   fgScale: ScaleDataWithComputedData,
   minContrast: number,
   maxContrast = 21,
 ): Combination[] => {
   const result: Combination[] = [];
-  bgScale.colors.forEach((bg, bgIndex) => {
-    fgScale.colors.forEach((fg, fgIndex) => {
-      const contrast = wcagContrast(bg, fg);
+  bgScale.swatches.forEach((bg) => {
+    fgScale.swatches.forEach((fg) => {
+      const contrast = wcagContrast(bg.oklch, fg.oklch);
       if (contrast >= minContrast && contrast < maxContrast) {
-        result.push({
-          bg,
-          bgLevel: levels[bgIndex],
-          fg,
-          fgLevel: levels[fgIndex],
-          contrast,
-        });
+        result.push({ bg, fg, contrast });
       }
     });
   });
@@ -71,9 +58,9 @@ const Combinations = ({
         <span>{combinations.length} combos</span>
       </header>
       <ul className="flex flex-wrap gap-2">
-        {combinations.map(({ bg, bgLevel, fg, fgLevel, contrast }, index) => {
-          const hexBg = formatCss(bg);
-          const hexFg = formatCss(fg);
+        {combinations.map(({ bg, fg, contrast }, index) => {
+          const hexBg = bg.css;
+          const hexFg = fg.css;
           return (
             <li
               key={index}
@@ -81,9 +68,9 @@ const Combinations = ({
               style={{ backgroundColor: hexBg, color: hexFg }}
             >
               <div className="mb-1 text-lg font-bold">
-                <span>lv.{fgLevel}</span>
+                <span>lv.{fg.level}</span>
                 <hr style={{ borderColor: hexFg }} />
-                <span>lv.{bgLevel}</span>
+                <span>lv.{bg.level}</span>
               </div>
               <span className="text-xs">{round(contrast, 1)}</span>
             </li>
@@ -101,13 +88,13 @@ const ScaleDisplay = ({
   scale: ScaleDataWithComputedData;
   className?: string;
 }) => {
-  const { colors } = scale;
-  const index = Math.floor((colors.length - 1) / 2);
-  const color = colors[index];
+  const { swatches } = scale;
+  const index = Math.floor((swatches.length - 1) / 2);
+  const swatch = swatches[index];
   return (
     <div
       className={clsx("rounded-full", className)}
-      style={{ backgroundColor: formatCss(color) }}
+      style={{ backgroundColor: swatch.css }}
     />
   );
 };
@@ -166,7 +153,6 @@ const atomSelectedFGScaleName = atomWithStorage<string>(
 );
 
 export default function PageCombinations() {
-  const [levels] = useAtom(atomLevels);
   const [scales] = useAtom(allColors);
   const [bgScaleName, setBGScaleName] = useAtom(atomSelectedBGScaleName);
   const [fgScaleName, setFGScaleName] = useAtom(atomSelectedFGScaleName);
@@ -176,11 +162,11 @@ export default function PageCombinations() {
     const fgScale = scales.find((s) => s.name === fgScaleName);
     if (!bgScale || !fgScale) return {};
     return {
-      "7": getCombosWithContrastRatioOrMore(levels, bgScale, fgScale, 7),
-      "4.5": getCombosWithContrastRatioOrMore(levels, bgScale, fgScale, 4.5, 7),
-      "3": getCombosWithContrastRatioOrMore(levels, bgScale, fgScale, 3, 4.5),
+      "7": getCombosWithContrastRatioOrMore(bgScale, fgScale, 7),
+      "4.5": getCombosWithContrastRatioOrMore(bgScale, fgScale, 4.5, 7),
+      "3": getCombosWithContrastRatioOrMore(bgScale, fgScale, 3, 4.5),
     };
-  }, [scales, bgScaleName, fgScaleName, levels]);
+  }, [scales, bgScaleName, fgScaleName]);
   return (
     <section className="my-8 space-y-8">
       <h2 className="flex flex-wrap items-center gap-1 text-2xl font-medium">
