@@ -7,9 +7,8 @@ import {
   ListboxOption,
   ListboxOptions,
 } from "@headlessui/react";
-import { wcagContrast } from "culori";
 import clsx from "clsx";
-import { formatCss, type Oklch, wcagContrast } from "culori";
+import { wcagContrast } from "culori";
 import { useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import { round } from "lodash";
