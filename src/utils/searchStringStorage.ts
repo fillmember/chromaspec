@@ -1,4 +1,5 @@
-import { debounce } from "lodash";
+import _ from "lodash";
+import * as purify from "purify-ts";
 
 const updateHistory = (params: URLSearchParams) => {
   history.replaceState(
@@ -8,7 +9,7 @@ const updateHistory = (params: URLSearchParams) => {
   );
 };
 
-export const setItem = debounce((key: string, value: string) => {
+export const setItem = _.debounce((key: string, value: string) => {
   const params = new URLSearchParams(window.location.search);
   params.set(key, value);
   updateHistory(params);
@@ -17,15 +18,21 @@ export const setItem = debounce((key: string, value: string) => {
 export const getItem = <T = unknown>(
   key: string,
   initialValue: T,
-  { encode, decode }: { encode: (x: T) => string; decode: (x: string) => T },
-) => {
+  {
+    encode,
+    decode,
+  }: {
+    encode: (x: T) => string;
+    decode: (x: string) => purify.Either<string, T>;
+  },
+): T => {
   const existingParams = new URLSearchParams(window.location.search);
   const existingData = existingParams.get(key);
   if (!existingData) {
     setItem(key, encode(initialValue));
     return initialValue;
   }
-  return decode(existingData);
+  return decode(existingData).orDefault(initialValue);
 };
 
 export const remove = (key: string) => {

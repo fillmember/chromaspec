@@ -1,17 +1,12 @@
+import { bellShapeCurve } from "@/utils/bellShapeCurve";
+import * as urlStorage from "@/utils/searchStringStorage";
+import * as culori from "culori";
 import { atom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import * as jsoncrush from "jsoncrush";
+import _ from "lodash";
+import * as purify from "purify-ts";
 import { defaultScales } from "./defaultScales";
-import {
-  clampChroma,
-  formatCss,
-  formatHex,
-  wcagLuminance,
-  type Oklch,
-} from "culori";
-import { bellShapeCurve } from "@/utils/bellShapeCurve";
-import { keyBy, mapValues, round, zipObject } from "lodash";
-import * as urlStorage from "@/utils/searchStringStorage";
 
 export interface ScaleData {
   name: string;
@@ -25,18 +20,44 @@ export interface ScaleData {
 
 export const defaultLevels = [2, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 95];
 
+const finiteNumber = purify.Codec.custom<number>({
+  decode: (input) =>
+    typeof input === "number" && Number.isFinite(input)
+      ? purify.Either.of(input)
+      : purify.Left(`Expected a finite number, got ${String(input)}`),
+  encode: (input) => input,
+});
+
+const chromaCodec = purify.Codec.interface({
+  multiplier: purify.number,
+  peak: purify.number,
+  steepness: purify.number,
+});
+
+const scaleDataCodec = purify.Codec.interface({
+  name: purify.string,
+  hue: purify.number,
+  chroma: chromaCodec,
+});
+
 const arrEncoder = (x: number[]) => x.join("_");
-const arrDecoder = (x: string) => x.split("_").map((x) => parseInt(x));
+const arrDecode = (raw: string): purify.Either<string, number[]> =>
+  purify.array(finiteNumber).decode(raw.split("_").map((x) => parseInt(x)));
+
 const objEncoder = (x: object) =>
   encodeURIComponent(jsoncrush.default.crush(JSON.stringify(x)));
-const objDecoder = (x: string) =>
-  JSON.parse(jsoncrush.default.uncrush(decodeURIComponent(x)));
+const objDecode = (raw: string): purify.Either<string, ScaleData[]> =>
+  purify.Either.encase(() =>
+    JSON.parse(jsoncrush.default.uncrush(decodeURIComponent(raw))),
+  )
+    .mapLeft((err) => (err as Error).message)
+    .chain((parsed) => purify.array(scaleDataCodec).decode(parsed));
 
 export const atomLevels = atomWithStorage("l", defaultLevels, {
   getItem(key, initialValue) {
     return urlStorage.getItem<number[]>(key, initialValue, {
       encode: arrEncoder,
-      decode: arrDecoder,
+      decode: arrDecode,
     });
   },
   setItem(key, value) {
@@ -49,7 +70,7 @@ export const atomUserData = atomWithStorage<ScaleData[]>("s", defaultScales, {
   getItem(key, initialValue) {
     return urlStorage.getItem<ScaleData[]>(key, initialValue, {
       encode: objEncoder,
-      decode: objDecoder,
+      decode: objDecode,
     });
   },
   setItem(key, value) {
@@ -60,7 +81,7 @@ export const atomUserData = atomWithStorage<ScaleData[]>("s", defaultScales, {
 
 export interface Swatch {
   level: number;
-  oklch: Oklch;
+  oklch: culori.Oklch;
   hex: string;
   css: string;
   luminance: number;
@@ -82,15 +103,19 @@ const computeSwatch = (
   const c =
     bellShapeCurve(peak, 0.001 * Math.pow(1000, steepness), index / count) *
     multiplier;
-  const oklch = clampChroma({ mode: "oklch", l, c, h: hue }, "oklch", "p3");
-  oklch.c = round(c * 0.25 + oklch.c * 0.75, 5);
+  const oklch = culori.clampChroma(
+    { mode: "oklch", l, c, h: hue },
+    "oklch",
+    "p3",
+  );
+  oklch.c = _.round(c * 0.25 + oklch.c * 0.75, 5);
   oklch.h = oklch.h ?? 0;
   return {
     level,
     oklch,
-    hex: formatHex(oklch),
-    css: formatCss(oklch),
-    luminance: round(wcagLuminance(oklch), 2),
+    hex: culori.formatHex(oklch),
+    css: culori.formatCss(oklch),
+    luminance: _.round(culori.wcagLuminance(oklch), 2),
   };
 };
 
@@ -127,8 +152,8 @@ export const atomSVGAllScales = atom<string>((get) => {
 export const atomTailwindConfig = atom<string>((get) => {
   const scales = get(allColors);
   return JSON.stringify(
-    mapValues(keyBy(scales, "name"), (scale) =>
-      zipObject(
+    _.mapValues(_.keyBy(scales, "name"), (scale) =>
+      _.zipObject(
         scale.swatches.map((swatch) => swatch.level),
         scale.swatches.map((swatch) => swatch.hex),
       ),
@@ -141,8 +166,8 @@ export const atomTailwindConfig = atom<string>((get) => {
 export const atomJSONDesignTokens = atom<string>((get) => {
   const scales = get(allColors);
   return JSON.stringify(
-    mapValues(keyBy(scales, "name"), (scale) =>
-      zipObject(
+    _.mapValues(_.keyBy(scales, "name"), (scale) =>
+      _.zipObject(
         scale.swatches.map((swatch) => swatch.level),
         scale.swatches.map(({ oklch, css, hex }) => ({
           lightness: oklch.l,
