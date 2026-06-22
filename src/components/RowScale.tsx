@@ -194,9 +194,53 @@ export function RowScale(props: IRowScale) {
   );
 }
 
+const HUE_NAMES: Record<number, string> = Object.freeze({
+  0: "Red",
+  10: "Vermilion",
+  20: "Red-Orange",
+  30: "Orange",
+  40: "Tangerine",
+  50: "Amber",
+  60: "Yellow",
+  70: "Golden",
+  80: "Citron",
+  90: "Chartreuse",
+  100: "Lime",
+  110: "Fern",
+  120: "Emerald",
+  130: "Forest",
+  140: "Sage",
+  150: "Green-Teal",
+  160: "Teal",
+  170: "Viridian",
+  180: "Cyan",
+  190: "Aqua",
+  200: "Sky Blue",
+  210: "Cerulean",
+  220: "Blue",
+  230: "Cobalt",
+  240: "Blue-Violet",
+  250: "Violet",
+  260: "Indigo",
+  270: "Purple",
+  280: "Amethyst",
+  290: "Purple-Magenta",
+  300: "Magenta",
+  310: "Magenta-Pink",
+  320: "Pink",
+  330: "Flamingo",
+  340: "Rose",
+  350: "Red-Pink",
+});
+
+function getHueName(hue: number): string {
+  const slot = (Math.round((((hue % 360) + 360) % 360) / 10) * 10) % 360;
+  return HUE_NAMES[slot] ?? "Color";
+}
+
 export function FieldName(props: IRowScaleField & { className?: string }) {
   const {
-    scale: { name },
+    scale: { name, hue },
     updateScale,
   } = props;
   return (
@@ -207,6 +251,14 @@ export function FieldName(props: IRowScaleField & { className?: string }) {
         value={name}
         onChange={(evt) => updateScale({ name: evt.target.value })}
       />
+      <button
+        type="button"
+        onClick={() => updateScale({ name: getHueName(hue) })}
+        className="flex shrink-0 items-center gap-1 text-sm text-zinc-500 hover:text-zinc-700"
+        title="Auto-name scale"
+      >
+        <icons.WandSparkles size={14} />
+      </button>
     </Field>
   );
 }
